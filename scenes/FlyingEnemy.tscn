@@ -1,24 +1,24 @@
-[gd_scene load_steps=6 format=3]
+[gd_scene format=3 uid="uid://cfonty2v1ikov"]
 
-[ext_resource type="Script" path="res://scripts/flying_enemy.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/flying_enemy_transparent.png" id="2_texture"]
+[ext_resource type="Script" uid="uid://df60u86l60wv7" path="res://scripts/flying_enemy.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://spf8xkyv1kuq" path="res://assets/Characters/Enemies/enemy-ghost-guy-Sheet.png" id="2_ov5dw"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fly_1"]
-atlas = ExtResource("2_texture")
-region = Rect2(0, 0, 117, 116)
+[sub_resource type="AtlasTexture" id="AtlasTexture_8uv2u"]
+atlas = ExtResource("2_ov5dw")
+region = Rect2(0, 0, 32, 32)
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_fly_2"]
-atlas = ExtResource("2_texture")
-region = Rect2(117, 0, 117, 116)
+[sub_resource type="AtlasTexture" id="AtlasTexture_j2u3l"]
+atlas = ExtResource("2_ov5dw")
+region = Rect2(32, 0, 32, 32)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_fly"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fly_1")
+"texture": SubResource("AtlasTexture_8uv2u")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_fly_2")
+"texture": SubResource("AtlasTexture_j2u3l")
 }],
 "loop": true,
 "name": &"fly",
@@ -31,26 +31,27 @@ size = Vector2(34, 24)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_damage"]
 size = Vector2(38, 28)
 
-[node name="FlyingEnemy" type="CharacterBody2D"]
+[node name="FlyingEnemy" type="CharacterBody2D" unique_id=187400014]
 collision_layer = 8
 collision_mask = 0
 script = ExtResource("1_script")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=840908940]
 texture_filter = 1
 scale = Vector2(0.35, 0.35)
 sprite_frames = SubResource("SpriteFrames_fly")
 animation = &"fly"
+frame_progress = 0.8402942
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1640560644]
 shape = SubResource("RectangleShape2D_body")
 
-[node name="DamageArea" type="Area2D" parent="."]
+[node name="DamageArea" type="Area2D" parent="." unique_id=1071366389]
 collision_layer = 0
 collision_mask = 2
 
-[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea"]
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea" unique_id=2088450758]
 shape = SubResource("RectangleShape2D_damage")
 
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=144061839]
 rect = Rect2(-20, -16, 40, 32)

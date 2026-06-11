@@ -4,7 +4,7 @@
 [ext_resource type="PackedScene" uid="uid://b4r6ta2eg1sy7" path="res://scenes/Player.tscn" id="2_4qe20"]
 [ext_resource type="PackedScene" uid="uid://dps4tl3yk2a8n" path="res://scenes/GroundEnemy.tscn" id="4_pw7g0"]
 [ext_resource type="TileSet" uid="uid://bggwov45y0gac" path="res://assets/placeholder_tileset.tres" id="4_shdva"]
-[ext_resource type="PackedScene" path="res://scenes/FlyingEnemy.tscn" id="5_pw7g0"]
+[ext_resource type="PackedScene" uid="uid://cfonty2v1ikov" path="res://scenes/FlyingEnemy.tscn" id="5_pw7g0"]
 
 [node name="LevelDraft" type="Node2D" unique_id=1350433231]
 script = ExtResource("1_yvfnt")
