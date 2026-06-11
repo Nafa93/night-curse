@@ -1,0 +1,28 @@
+[gd_scene format=3 uid="uid://cmbylwumw8ula"]
+
+[ext_resource type="Script" uid="uid://du5cp7k2ub4bv" path="res://scripts/sun_artifact.gd" id="1_f7srf"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_crxl5"]
+radius = 42.0
+
+[node name="SunArtifact" type="Area2D" unique_id=617252354]
+collision_layer = 0
+collision_mask = 2
+script = ExtResource("1_f7srf")
+
+[node name="Visual" type="Polygon2D" parent="." unique_id=751553751]
+color = Color(0.88, 0.71, 0.28, 1)
+polygon = PackedVector2Array(0, -20, 12, -6, 20, 0, 12, 6, 0, 20, -12, 6, -20, 0, -12, -6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=685129226]
+shape = SubResource("CircleShape2D_crxl5")
+
+[node name="PromptLabel" type="Label" parent="." unique_id=1517602391]
+offset_left = -58.0
+offset_top = -72.0
+offset_right = 58.0
+offset_bottom = -44.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_font_sizes/font_size = 18
+text = "Z: SUN"
+horizontal_alignment = 1
