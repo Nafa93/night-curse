@@ -4,6 +4,7 @@ extends CharacterBody2D
 @export var patrol_distance := 120.0
 @export var gravity := 980.0
 @export var health := 1
+@export var score_value := 100
 @export var active_in_corporeal_world := true
 @export var active_in_spectral_world := false
 
@@ -48,6 +49,9 @@ func set_day_state(is_corporeal: bool) -> void:
 func take_hit() -> void:
 	health -= 1
 	if health <= 0:
+		var level := get_tree().current_scene
+		if level.has_method("add_points"):
+			level.add_points(score_value)
 		queue_free()
 
 func _turn_around() -> void:

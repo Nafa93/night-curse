@@ -12,6 +12,7 @@ enum MovementMode {
 @export var wave_length := 240.0
 @export var starts_moving_right := true
 @export var health := 1
+@export var score_value := 200
 @export var active_in_corporeal_world := true
 @export var active_in_spectral_world := true
 
@@ -60,6 +61,9 @@ func set_day_state(is_corporeal: bool) -> void:
 func take_hit() -> void:
 	health -= 1
 	if health <= 0:
+		var level := get_tree().current_scene
+		if level.has_method("add_points"):
+			level.add_points(score_value)
 		queue_free()
 
 func _update_visual_direction() -> void:
