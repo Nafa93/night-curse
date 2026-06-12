@@ -4,7 +4,13 @@
 [ext_resource type="PackedScene" uid="uid://b4r6ta2eg1sy7" path="res://scenes/Player.tscn" id="2_4qe20"]
 [ext_resource type="PackedScene" uid="uid://dps4tl3yk2a8n" path="res://scenes/GroundEnemy.tscn" id="4_pw7g0"]
 [ext_resource type="TileSet" uid="uid://bggwov45y0gac" path="res://assets/placeholder_tileset.tres" id="4_shdva"]
-[ext_resource type="PackedScene" uid="uid://cfonty2v1ikov" path="res://scenes/FlyingEnemy.tscn" id="5_pw7g0"]
+[ext_resource type="PackedScene" uid="uid://c22tg6wb567cx" path="res://scenes/FlyingEnemy.tscn" id="5_pw7g0"]
+[ext_resource type="FontFile" path="res://assets/fonts/nintendo-nes-font.ttf" id="6_hud_font"]
+[ext_resource type="Texture2D" path="res://assets/life_heart_16x16.png" id="7_life_full"]
+[ext_resource type="Texture2D" path="res://assets/life_heart_empty_16x16.png" id="8_life_empty"]
+[ext_resource type="Texture2D" path="res://assets/key_icon_16x16.png" id="9_key_full"]
+[ext_resource type="Texture2D" path="res://assets/key_icon_empty_16x16.png" id="10_key_empty"]
+[ext_resource type="PackedScene" path="res://scenes/KeyItem.tscn" id="11_key_item"]
 
 [node name="LevelDraft" type="Node2D" unique_id=1350433231]
 script = ExtResource("1_yvfnt")
@@ -26,13 +32,16 @@ position = Vector2(34, 176)
 [node name="StartPosition" type="Marker2D" parent="." unique_id=901888778]
 position = Vector2(34, 176)
 
+[node name="TestKey" parent="." instance=ExtResource("11_key_item")]
+position = Vector2(96, 176)
+
 [node name="HUD" type="CanvasLayer" parent="." unique_id=1217515411]
 
 [node name="Panel" type="Control" parent="HUD" unique_id=693172322]
 layout_mode = 3
 anchors_preset = 10
 anchor_right = 1.0
-offset_bottom = 48.0
+offset_bottom = 32.0
 grow_horizontal = 2
 
 [node name="Bar" type="ColorRect" parent="HUD/Panel" unique_id=1719212599]
@@ -41,45 +50,173 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 color = Color(0.02, 0.02, 0.03, 1)
 
-[node name="LivesLabel" type="Label" parent="HUD/Panel" unique_id=1008495659]
+[node name="LivesTitle" type="Label" parent="HUD/Panel"]
 layout_mode = 0
-offset_left = 12.0
-offset_top = 10.0
-offset_right = 190.0
-offset_bottom = 42.0
+offset_left = 8.0
+offset_top = 5.0
+offset_right = 45.0
+offset_bottom = 16.0
 theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
-theme_override_font_sizes/font_size = 22
-text = "LIVES  III"
+theme_override_fonts/font = ExtResource("6_hud_font")
+theme_override_font_sizes/font_size = 8
+text = "LIVES"
 
-[node name="FormLabel" type="Label" parent="HUD/Panel" unique_id=77673138]
+[node name="Life1" type="Control" parent="HUD/Panel"]
 layout_mode = 0
-offset_left = 148.0
-offset_top = 10.0
-offset_right = 390.0
-offset_bottom = 42.0
-theme_override_colors/font_color = Color(0.56, 0.84, 1, 1)
-theme_override_font_sizes/font_size = 22
-text = "NIGHT  GHOST"
+offset_left = 48.0
+offset_top = 1.0
+offset_right = 64.0
+offset_bottom = 17.0
 
-[node name="KeyLabel" type="Label" parent="HUD/Panel" unique_id=1336657392]
+[node name="Empty" type="TextureRect" parent="HUD/Panel/Life1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_life_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/Life1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_life_full")
+expand_mode = 1
+
+[node name="Life2" type="Control" parent="HUD/Panel"]
 layout_mode = 0
-offset_left = 410.0
-offset_top = 10.0
-offset_right = 540.0
-offset_bottom = 42.0
+offset_left = 66.0
+offset_top = 1.0
+offset_right = 82.0
+offset_bottom = 17.0
+
+[node name="Empty" type="TextureRect" parent="HUD/Panel/Life2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_life_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/Life2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_life_full")
+expand_mode = 1
+
+[node name="Life3" type="Control" parent="HUD/Panel"]
+layout_mode = 0
+offset_left = 84.0
+offset_top = 1.0
+offset_right = 100.0
+offset_bottom = 17.0
+
+[node name="Empty" type="TextureRect" parent="HUD/Panel/Life3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("8_life_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/Life3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_life_full")
+expand_mode = 1
+
+[node name="KeysTitle" type="Label" parent="HUD/Panel"]
+layout_mode = 0
+offset_left = 168.0
+offset_top = 5.0
+offset_right = 201.0
+offset_bottom = 16.0
 theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
-theme_override_font_sizes/font_size = 22
-text = "KEY  -"
+theme_override_fonts/font = ExtResource("6_hud_font")
+theme_override_font_sizes/font_size = 8
+text = "KEYS"
+
+[node name="Key1" type="Control" parent="HUD/Panel"]
+layout_mode = 0
+offset_left = 204.0
+offset_top = 1.0
+offset_right = 220.0
+offset_bottom = 17.0
+
+[node name="Empty" type="TextureRect" parent="HUD/Panel/Key1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_key_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/Key1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_key_full")
+expand_mode = 1
+
+[node name="Key2" type="Control" parent="HUD/Panel"]
+layout_mode = 0
+offset_left = 224.0
+offset_top = 1.0
+offset_right = 240.0
+offset_bottom = 17.0
+
+[node name="Empty" type="TextureRect" parent="HUD/Panel/Key2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("10_key_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/Key2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("9_key_full")
+expand_mode = 1
 
 [node name="MessageLabel" type="Label" parent="HUD/Panel" unique_id=131856955]
 layout_mode = 0
-offset_left = 560.0
-offset_top = 10.0
-offset_right = 628.0
-offset_bottom = 42.0
+offset_left = 4.0
+offset_top = 19.0
+offset_right = 252.0
+offset_bottom = 30.0
 theme_override_colors/font_color = Color(0.93, 0.24, 0.25, 1)
-theme_override_font_sizes/font_size = 22
-horizontal_alignment = 2
+theme_override_fonts/font = ExtResource("6_hud_font")
+theme_override_font_sizes/font_size = 8
+horizontal_alignment = 1
 
 [node name="Level" type="Node2D" parent="." unique_id=1435994021]
 

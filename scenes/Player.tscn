@@ -5,10 +5,10 @@
 [ext_resource type="Texture2D" uid="uid://diwi7or2n43br" path="res://assets/Characters/Player/main-char-Sheet.png" id="3_3li8b"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i7ofd"]
-size = Vector2(22, 32)
+size = Vector2(8, 28)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
-size = Vector2(28, 20)
+size = Vector2(21, 15)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mdl7e"]
 atlas = ExtResource("3_3li8b")
@@ -85,16 +85,8 @@ collision_layer = 2
 script = ExtResource("1_6f1ol")
 spectral_projectile_scene = ExtResource("2_fovrh")
 
-[node name="Body" type="Polygon2D" parent="." unique_id=40993638]
-color = Color(0.74, 0.16, 0.18, 1)
-polygon = PackedVector2Array(-11, -16, 11, -16, 11, 16, -11, 16)
-
-[node name="Head" type="Polygon2D" parent="." unique_id=1671704904]
-position = Vector2(0, -22)
-color = Color(0.91, 0.78, 0.55, 1)
-polygon = PackedVector2Array(-8, -7, 8, -7, 8, 7, -8, 7)
-
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1474575413]
+position = Vector2(-1, -1)
 shape = SubResource("RectangleShape2D_i7ofd")
 
 [node name="AttackArea" type="Area2D" parent="." unique_id=1595408933]
@@ -103,20 +95,22 @@ collision_mask = 8
 monitoring = false
 
 [node name="Visual" type="Polygon2D" parent="AttackArea" unique_id=272940695]
-visible = false
+position = Vector2(0, 3.5)
+scale = Vector2(0.5714286, 0.74999994)
 color = Color(0.9, 0.86, 0.52, 1)
 polygon = PackedVector2Array(0, -10, 28, -10, 28, 10, 0, 10)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=730066826]
+position = Vector2(5.5, 3.5)
 shape = SubResource("RectangleShape2D_attack")
 disabled = true
 
 [node name="LeftFootCheck" type="RayCast2D" parent="." unique_id=1107833433]
-position = Vector2(-8, 0)
+position = Vector2(-4, 0)
 target_position = Vector2(0, 22)
 
 [node name="RightFootCheck" type="RayCast2D" parent="." unique_id=904400148]
-position = Vector2(8, 0)
+position = Vector2(2, 0)
 target_position = Vector2(0, 22)
 
 [node name="Camera2D" type="Camera2D" parent="." unique_id=646363379]
@@ -131,5 +125,4 @@ position_smoothing_speed = 8.0
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2062478235]
 sprite_frames = SubResource("SpriteFrames_6eyey")
 animation = &"Walking"
-frame = 1
-frame_progress = 0.8740673
+frame_progress = 0.039783854

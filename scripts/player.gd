@@ -1,7 +1,7 @@
 extends CharacterBody2D
 
 signal lives_changed(lives: int, max_lives: int)
-signal key_changed(has_key: bool)
+signal keys_changed(key_count: int, max_keys: int)
 signal game_over
 
 @export var speed := 180.0
@@ -10,6 +10,7 @@ signal game_over
 @export var acceleration := 1200.0
 @export var friction := 1400.0
 @export var max_lives := 3
+@export var max_keys := 2
 @export var fall_limit_y := 420.0
 @export var attack_time := 0.18
 @export var attack_cooldown := 0.35
@@ -18,8 +19,7 @@ signal game_over
 @export var hit_feedback_time := 0.3
 @export var spectral_projectile_scene: PackedScene
 
-@onready var sprite: Polygon2D = $Body
-@onready var head: Polygon2D = $Head
+@onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var attack_area: Area2D = $AttackArea
 @onready var attack_shape: CollisionShape2D = $AttackArea/CollisionShape2D
 @onready var attack_visual: Polygon2D = $AttackArea/Visual
@@ -30,7 +30,10 @@ var lives := max_lives
 var respawn_position := Vector2.ZERO
 var is_respawning := false
 var is_day_form := false
-var has_key := false
+var key_count := 0
+var has_key: bool:
+	get:
+		return key_count > 0
 var facing_direction := 1.0
 var can_attack := true
 var is_taking_damage := false
@@ -41,17 +44,13 @@ func _ready() -> void:
 	attack_area.body_entered.connect(_on_attack_body_entered)
 	_set_attack_enabled(false)
 	lives_changed.emit(lives, max_lives)
-	key_changed.emit(has_key)
+	keys_changed.emit(key_count, max_keys)
 
 func set_day_state(is_day: bool) -> void:
 	is_day_form = is_day
 	if is_day:
-		sprite.color = Color(0.74, 0.16, 0.18, 1)
-		head.color = Color(0.91, 0.78, 0.55, 1)
 		modulate.a = 1.0
 	else:
-		sprite.color = Color(0.36, 0.72, 0.94, 1)
-		head.color = Color(0.72, 0.91, 1.0, 1)
 		modulate.a = 0.62
 
 func _physics_process(delta: float) -> void:
@@ -70,7 +69,7 @@ func _physics_process(delta: float) -> void:
 	if direction != 0.0:
 		facing_direction = sign(direction)
 		velocity.x = move_toward(velocity.x, direction * speed, acceleration * delta)
-		sprite.scale.x = facing_direction
+		sprite.flip_h = facing_direction < 0.0
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 
@@ -91,16 +90,20 @@ func _physics_process(delta: float) -> void:
 func _has_stable_floor_support() -> bool:
 	return left_foot_check.is_colliding() and right_foot_check.is_colliding()
 
-func collect_key() -> void:
-	has_key = true
-	key_changed.emit(has_key)
-
-func use_key() -> bool:
-	if not has_key:
+func collect_key() -> bool:
+	if key_count >= max_keys:
 		return false
 
-	has_key = false
-	key_changed.emit(has_key)
+	key_count += 1
+	keys_changed.emit(key_count, max_keys)
+	return true
+
+func use_key() -> bool:
+	if key_count <= 0:
+		return false
+
+	key_count -= 1
+	keys_changed.emit(key_count, max_keys)
 	return true
 
 func take_damage(source_position: Vector2 = Vector2.ZERO) -> void:
@@ -121,10 +124,8 @@ func _flash_player() -> void:
 	var flash_interval := hit_feedback_time / 6.0
 	for _flash_index in range(3):
 		sprite.visible = false
-		head.visible = false
 		await get_tree().create_timer(flash_interval).timeout
 		sprite.visible = true
-		head.visible = true
 		await get_tree().create_timer(flash_interval).timeout
 
 func _start_attack() -> void:

@@ -17,9 +17,11 @@ func _process(_delta: float) -> void:
 	if player.is_day_form:
 		prompt_label.text = "Z: TAKE"
 		if Input.is_action_just_pressed("interact"):
-			player.collect_key()
-			is_taken = true
-			queue_free()
+			if player.collect_key():
+				is_taken = true
+				queue_free()
+			else:
+				prompt_label.text = "KEYS FULL"
 	else:
 		prompt_label.text = "NEED BODY"
 

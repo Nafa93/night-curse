@@ -16,3 +16,6 @@ polygon = PackedVector2Array(-9, 0, -2, -6, 9, -3, 9, 3, -2, 6)
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
 shape = SubResource("RectangleShape2D_projectile")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-9, -6, 18, 12)
