@@ -1,4 +1,4 @@
-[gd_scene format=4 uid="uid://bj6mq0e3mdn08"]
+[gd_scene format=4]
 
 [ext_resource type="Script" uid="uid://ljcortjhn66u" path="res://scripts/main.gd" id="1_yvfnt"]
 [ext_resource type="PackedScene" uid="uid://b4r6ta2eg1sy7" path="res://scenes/Player.tscn" id="2_4qe20"]
@@ -8,7 +8,7 @@
 [ext_resource type="Texture2D" uid="uid://b4jrl2ivpygmd" path="res://assets/life_heart_empty_16x16.png" id="8_life_empty"]
 [ext_resource type="Texture2D" uid="uid://chbflxyyx65df" path="res://assets/key_icon_16x16.png" id="9_key_full"]
 [ext_resource type="Texture2D" uid="uid://c0pu6k6g4te2x" path="res://assets/key_icon_empty_16x16.png" id="10_key_empty"]
-[ext_resource type="PackedScene" path="res://scenes/TileMapLevelContent.tscn" id="10_psyul"]
+[ext_resource type="PackedScene" path="res://scenes/TileMapLevelContent.tscn" id="12_level_content"]
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_box"]
 bg_color = Color(0, 0, 0, 1)
@@ -18,7 +18,7 @@ border_width_right = 1
 border_width_bottom = 1
 border_color = Color(0.93, 0.93, 0.84, 1)
 
-[node name="LevelDraft" type="Node2D" unique_id=1350433231]
+[node name="LevelDraftTileMap" type="Node2D" unique_id=1350433231]
 script = ExtResource("1_yvfnt")
 
 [node name="Background" type="CanvasLayer" parent="." unique_id=426457677]
@@ -305,4 +305,4 @@ enabled = false
 tile_set = ExtResource("4_shdva")
 collision_enabled = false
 
-[node name="TileMapLevelContent" parent="." unique_id=136754137 instance=ExtResource("10_psyul")]
+[node name="DesignedLevel" parent="." unique_id=1119515520 instance=ExtResource("12_level_content")]

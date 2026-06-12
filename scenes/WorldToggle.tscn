@@ -1,6 +1,7 @@
 [gd_scene format=3 uid="uid://cmbylwumw8ula"]
 
 [ext_resource type="Script" uid="uid://du5cp7k2ub4bv" path="res://scripts/sun_artifact.gd" id="1_f7srf"]
+[ext_resource type="FontFile" path="res://assets/fonts/nintendo-nes-font.ttf" id="2_font"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_crxl5"]
 radius = 42.0
@@ -18,11 +19,12 @@ polygon = PackedVector2Array(0, -20, 12, -6, 20, 0, 12, 6, 0, 20, -12, 6, -20, 0
 shape = SubResource("CircleShape2D_crxl5")
 
 [node name="PromptLabel" type="Label" parent="." unique_id=1517602391]
-offset_left = -58.0
-offset_top = -72.0
-offset_right = 58.0
-offset_bottom = -44.0
+offset_left = -48.0
+offset_top = -36.0
+offset_right = 48.0
+offset_bottom = -25.0
 theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
-theme_override_font_sizes/font_size = 18
-text = "Z: SUN"
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 8
+text = "UP: SHIFT"
 horizontal_alignment = 1

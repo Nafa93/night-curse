@@ -58,6 +58,12 @@ func _update_shape_and_tiles() -> void:
 			]
 		)
 
+	var top_edge := get_node_or_null("TopEdge") as Line2D
+	if top_edge != null:
+		var half_width := platform_size.x * 0.5
+		top_edge.position.y = -platform_size.y * 0.5 + 1.0
+		top_edge.points = PackedVector2Array([Vector2(-half_width, 0), Vector2(half_width, 0)])
+
 	var tile_skin := get_node_or_null("TileSkin")
 	if tile_skin != null:
 		tile_skin.texture = tile_texture

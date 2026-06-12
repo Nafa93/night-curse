@@ -4,11 +4,11 @@ signal lives_changed(lives: int, max_lives: int)
 signal keys_changed(key_count: int, max_keys: int)
 signal game_over
 
-@export var speed := 180.0
-@export var jump_velocity := -460.0
-@export var gravity := 980.0
-@export var acceleration := 1200.0
-@export var friction := 1400.0
+@export var speed := 90.0
+@export var jump_velocity := -270.0
+@export var gravity := 900.0
+@export var acceleration := 720.0
+@export var friction := 900.0
 @export var max_lives := 3
 @export var max_keys := 2
 @export var fall_limit_y := 420.0

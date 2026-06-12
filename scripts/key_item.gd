@@ -15,7 +15,7 @@ func _process(_delta: float) -> void:
 		return
 
 	if player.is_day_form:
-		prompt_label.text = "Z: TAKE"
+		prompt_label.text = "UP: TAKE"
 		if Input.is_action_just_pressed("interact"):
 			if player.collect_key():
 				is_taken = true
