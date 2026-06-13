@@ -124,5 +124,4 @@ position_smoothing_speed = 8.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2062478235]
 sprite_frames = SubResource("SpriteFrames_6eyey")
-animation = &"Walking"
-frame_progress = 0.039783854
+animation = &"Idle"
