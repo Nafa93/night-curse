@@ -1,0 +1,244 @@
+[gd_scene load_steps=8 format=3]
+
+[ext_resource type="Script" path="res://scripts/Levels/hud.gd" id="1_script"]
+[ext_resource type="FontFile" path="res://assets/fonts/nintendo-nes-font.ttf" id="1_font"]
+[ext_resource type="Texture2D" path="res://assets/Items/life_heart_empty_16x16.png" id="2_life_empty"]
+[ext_resource type="Texture2D" path="res://assets/Items/life_heart_16x16.png" id="3_life_full"]
+[ext_resource type="Texture2D" path="res://assets/Items/key_icon_empty_16x16.png" id="4_key_empty"]
+[ext_resource type="Texture2D" path="res://assets/Items/key_icon_16x16.png" id="5_key_full"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_box"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.93, 0.93, 0.84, 1)
+
+[node name="HUD" type="CanvasLayer"]
+script = ExtResource("1_script")
+
+[node name="Panel" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 52.0
+grow_horizontal = 2
+
+[node name="LivesBox" type="Panel" parent="Panel"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 84.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_box")
+
+[node name="Title" type="Label" parent="Panel/LivesBox"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 80.0
+offset_bottom = 13.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 8
+text = "LIVES"
+horizontal_alignment = 1
+
+[node name="Life1" type="Control" parent="Panel/LivesBox"]
+anchors_preset = 0
+offset_left = 13.0
+offset_top = 17.0
+offset_right = 29.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="Panel/LivesBox/Life1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_life_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="Panel/LivesBox/Life1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_life_full")
+expand_mode = 1
+
+[node name="Life2" type="Control" parent="Panel/LivesBox"]
+anchors_preset = 0
+offset_left = 33.0
+offset_top = 17.0
+offset_right = 49.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="Panel/LivesBox/Life2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_life_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="Panel/LivesBox/Life2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_life_full")
+expand_mode = 1
+
+[node name="Life3" type="Control" parent="Panel/LivesBox"]
+anchors_preset = 0
+offset_left = 53.0
+offset_top = 17.0
+offset_right = 69.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="Panel/LivesBox/Life3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("2_life_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="Panel/LivesBox/Life3"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_life_full")
+expand_mode = 1
+
+[node name="PointsBox" type="Panel" parent="Panel"]
+layout_mode = 0
+offset_left = 87.0
+offset_top = 2.0
+offset_right = 169.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_box")
+
+[node name="Title" type="Label" parent="Panel/PointsBox"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 80.0
+offset_bottom = 13.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 8
+text = "SCORE"
+horizontal_alignment = 1
+
+[node name="PointsValue" type="Label" parent="Panel/PointsBox"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 19.0
+offset_right = 80.0
+offset_bottom = 30.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 8
+text = "000000"
+horizontal_alignment = 1
+
+[node name="KeysBox" type="Panel" parent="Panel"]
+layout_mode = 0
+offset_left = 172.0
+offset_top = 2.0
+offset_right = 254.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_box")
+
+[node name="Title" type="Label" parent="Panel/KeysBox"]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 80.0
+offset_bottom = 13.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 8
+text = "KEYS"
+horizontal_alignment = 1
+
+[node name="Key1" type="Control" parent="Panel/KeysBox"]
+anchors_preset = 0
+offset_left = 22.0
+offset_top = 17.0
+offset_right = 38.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="Panel/KeysBox/Key1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_key_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="Panel/KeysBox/Key1"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_key_full")
+expand_mode = 1
+
+[node name="Key2" type="Control" parent="Panel/KeysBox"]
+anchors_preset = 0
+offset_left = 44.0
+offset_top = 17.0
+offset_right = 60.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="Panel/KeysBox/Key2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_key_empty")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="Panel/KeysBox/Key2"]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_key_full")
+expand_mode = 1
+
+[node name="MessageLabel" type="Label" parent="Panel"]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 42.0
+offset_right = 252.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(0.93, 0.24, 0.25, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 8
+horizontal_alignment = 1

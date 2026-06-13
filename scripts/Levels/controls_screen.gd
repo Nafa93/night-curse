@@ -1,6 +1,6 @@
 extends Control
 
-const LEVEL_SCENE := "res://scenes/Levels/LevelDraft.tscn"
+const LEVEL_SCENE := "res://scenes/Levels/FirstLevel.tscn"
 
 func _unhandled_input(event: InputEvent) -> void:
 	if event.is_action_pressed("start"):

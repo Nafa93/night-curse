@@ -1,0 +1,19 @@
+[gd_scene format=3 uid="uid://bj6mq0e3mdn08"]
+
+[ext_resource type="Script" uid="uid://ljcortjhn66u" path="res://scripts/Levels/first_level.gd" id="1_4y20v"]
+[ext_resource type="PackedScene" uid="uid://b4r6ta2eg1sy7" path="res://scenes/Characters/Player/Player.tscn" id="2_4q8ap"]
+[ext_resource type="PackedScene" path="res://scenes/Levels/GameOverScreen.tscn" id="8_game_over"]
+[ext_resource type="PackedScene" path="res://scenes/Levels/HUD.tscn" id="9_hud"]
+
+[node name="FirstLevel" type="Node2D" unique_id=1350433231]
+script = ExtResource("1_4y20v")
+
+[node name="Player" parent="." unique_id=257405712 instance=ExtResource("2_4q8ap")]
+position = Vector2(34, 176)
+
+[node name="StartPosition" type="Marker2D" parent="." unique_id=901888778]
+position = Vector2(34, 176)
+
+[node name="HUD" parent="." instance=ExtResource("9_hud")]
+
+[node name="GameOverScreen" parent="." instance=ExtResource("8_game_over")]

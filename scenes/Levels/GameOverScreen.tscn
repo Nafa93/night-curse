@@ -1,0 +1,27 @@
+[gd_scene load_steps=2 format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/nintendo-nes-font.ttf" id="1_font"]
+
+[node name="GameOverScreen" type="CanvasLayer"]
+process_mode = 3
+layer = 20
+visible = false
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 105.0
+offset_right = 248.0
+offset_bottom = 133.0
+theme_override_colors/font_color = Color(0.72, 0.12, 0.16, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 20
+text = "GAME OVER"
+horizontal_alignment = 1
