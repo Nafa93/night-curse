@@ -11,6 +11,7 @@
 [ext_resource type="PackedScene" path="res://scenes/Levels/SectionDoor.tscn" id="10_ldhju"]
 [ext_resource type="PackedScene" path="res://scenes/Levels/WorldTransition.tscn" id="10_world_transition"]
 [ext_resource type="PackedScene" path="res://scenes/Items/CookiePickup.tscn" id="11_cookie"]
+[ext_resource type="PackedScene" path="res://scenes/Characters/Enemies/RightHandMelee.tscn" id="12_buptn"]
 
 [node name="FirstLevel" type="Node2D" unique_id=1350433231]
 script = ExtResource("1_4y20v")
@@ -59,3 +60,6 @@ position = Vector2(1031, 184)
 
 [node name="WorldToggle" parent="." unique_id=617252354 instance=ExtResource("6_p2c6n")]
 position = Vector2(1191, 180)
+
+[node name="RightHandMelee" parent="." unique_id=347936552 instance=ExtResource("12_buptn")]
+position = Vector2(934, 141)
