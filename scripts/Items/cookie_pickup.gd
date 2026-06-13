@@ -29,7 +29,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 	if CollectibleTracker.collect_cookie(_resolved_id):
 		_collected = true
-		monitoring = false
+		set_deferred("monitoring", false)
 		queue_free()
 
 func _resolve_collectible_id() -> String:
