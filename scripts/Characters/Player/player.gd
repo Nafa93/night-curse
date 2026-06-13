@@ -43,6 +43,7 @@ func _ready() -> void:
 	attack_area.area_entered.connect(_on_attack_area_entered)
 	attack_area.body_entered.connect(_on_attack_body_entered)
 	_set_attack_enabled(false)
+	_play_animation(&"Idle")
 	lives_changed.emit(lives, max_lives)
 	keys_changed.emit(key_count, max_keys)
 
@@ -62,6 +63,7 @@ func _physics_process(delta: float) -> void:
 
 	if is_taking_damage:
 		move_and_slide()
+		_update_animation()
 		return
 
 	var direction := Input.get_axis("ui_left", "ui_right")
@@ -77,6 +79,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y = jump_velocity
 
 	move_and_slide()
+	_update_animation()
 
 	if is_on_floor() and _has_stable_floor_support():
 		respawn_position = global_position
@@ -86,6 +89,18 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("attack"):
 		_start_attack()
+
+func _update_animation() -> void:
+	if not is_on_floor():
+		_play_animation(&"Jump" if velocity.y < 0.0 else &"Fall")
+	elif abs(velocity.x) > 1.0:
+		_play_animation(&"Walking")
+	else:
+		_play_animation(&"Idle")
+
+func _play_animation(animation_name: StringName) -> void:
+	if sprite.animation != animation_name or not sprite.is_playing():
+		sprite.play(animation_name)
 
 func _has_stable_floor_support() -> bool:
 	return left_foot_check.is_colliding() and right_foot_check.is_colliding()
