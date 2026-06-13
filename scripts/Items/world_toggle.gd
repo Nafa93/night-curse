@@ -11,7 +11,9 @@ func _ready() -> void:
 
 func _process(_delta: float) -> void:
 	if player_is_near and Input.is_action_just_pressed("interact"):
-		get_tree().current_scene.toggle_day()
+		var level := get_tree().current_scene
+		if level.has_method("toggle_world"):
+			level.toggle_world()
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.name == "Player":
