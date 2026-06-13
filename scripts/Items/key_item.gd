@@ -1,5 +1,7 @@
 extends Area2D
 
+@export var score_value := 300
+
 @onready var prompt_label: Label = $PromptLabel
 
 var player: Node = null
@@ -18,6 +20,7 @@ func _process(_delta: float) -> void:
 	if Input.is_action_just_pressed("interact"):
 		if player.collect_key():
 			is_taken = true
+			_award_points()
 			queue_free()
 		else:
 			prompt_label.text = "KEYS FULL"
@@ -31,3 +34,10 @@ func _on_body_exited(body: Node2D) -> void:
 	if body == player:
 		player = null
 		prompt_label.visible = false
+
+func _award_points() -> void:
+	var level := get_tree().current_scene
+	if level.has_method("award_points"):
+		level.award_points(score_value, global_position)
+	elif level.has_method("add_points"):
+		level.add_points(score_value)

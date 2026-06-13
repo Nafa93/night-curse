@@ -2,6 +2,8 @@ extends Node2D
 
 signal world_changed(is_otherside: bool)
 
+const FLOATING_SCORE_SCENE := preload("res://scenes/Levels/FloatingScore.tscn")
+
 @export var camera_vertical_offset := -24.0
 
 @onready var player: CharacterBody2D = $Player
@@ -82,6 +84,16 @@ func show_level_clear() -> void:
 func add_points(amount: int) -> void:
 	points += max(amount, 0)
 	_update_points_label()
+
+func award_points(amount: int, world_position: Vector2) -> void:
+	if amount <= 0:
+		return
+
+	add_points(amount)
+	var floating_score := FLOATING_SCORE_SCENE.instantiate()
+	floating_score.setup(amount)
+	floating_score.position = to_local(world_position)
+	add_child(floating_score)
 
 func _update_points_label() -> void:
 	hud.update_score(points)

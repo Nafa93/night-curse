@@ -53,7 +53,9 @@ func take_hit() -> void:
 	health -= 1
 	if health <= 0:
 		var level := get_tree().current_scene
-		if level.has_method("add_points"):
+		if level.has_method("award_points"):
+			level.award_points(score_value, global_position)
+		elif level.has_method("add_points"):
 			level.add_points(score_value)
 		_try_drop_heart()
 		queue_free()

@@ -1,6 +1,7 @@
 extends Area2D
 
 @export var collectible_id := ""
+@export var score_value := 500
 @export var bob_height := 2.0
 @export var bob_speed := 3.0
 
@@ -30,6 +31,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if CollectibleTracker.collect_cookie(_resolved_id):
 		_collected = true
 		set_deferred("monitoring", false)
+		_award_points()
 		queue_free()
 
 func _resolve_collectible_id() -> String:
@@ -38,3 +40,10 @@ func _resolve_collectible_id() -> String:
 
 	var scene_path := get_tree().current_scene.scene_file_path
 	return "%s:%s" % [scene_path, get_path()]
+
+func _award_points() -> void:
+	var level := get_tree().current_scene
+	if level.has_method("award_points"):
+		level.award_points(score_value, global_position)
+	elif level.has_method("add_points"):
+		level.add_points(score_value)
