@@ -1,0 +1,61 @@
+[gd_scene format=3 uid="uid://dps4tl3yk2a8n"]
+
+[ext_resource type="Script" uid="uid://dbm6p4yc1kysa" path="res://scripts/Characters/Enemies/ground_enemy.gd" id="1_1v0cw"]
+[ext_resource type="Texture2D" uid="uid://booi773are11e" path="res://assets/Characters/Enemies/enemy-hooded-guy-Sheet.png" id="2_p4t3f"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_a06gp"]
+atlas = ExtResource("2_p4t3f")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_qunq5"]
+atlas = ExtResource("2_p4t3f")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_612s2"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_a06gp")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_qunq5")
+}],
+"loop": true,
+"name": &"default",
+"speed": 5.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(27, 29.5)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_damage"]
+size = Vector2(15, 29)
+
+[node name="GroundEnemy" type="CharacterBody2D" unique_id=1867934572]
+collision_layer = 8
+script = ExtResource("1_1v0cw")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1933376110]
+scale = Vector2(1.05625, 1.05625)
+sprite_frames = SubResource("SpriteFrames_612s2")
+frame = 1
+frame_progress = 0.4554153
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1617460528]
+position = Vector2(2.5, 0.25)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="DamageArea" type="Area2D" parent="." unique_id=668396780]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea" unique_id=1311204078]
+position = Vector2(1.5, 0.5)
+shape = SubResource("RectangleShape2D_damage")
+debug_color = Color(0.98155755, 0, 0.37410924, 0.41960785)
+
+[node name="FloorCheck" type="RayCast2D" parent="." unique_id=490003989]
+target_position = Vector2(0, 19)
+
+[node name="WallCheck" type="RayCast2D" parent="." unique_id=772009006]
+target_position = Vector2(17, 0)

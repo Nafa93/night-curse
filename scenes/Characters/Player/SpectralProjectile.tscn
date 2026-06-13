@@ -1,0 +1,21 @@
+[gd_scene format=3 uid="uid://dbv5e2id64pjm"]
+
+[ext_resource type="Script" uid="uid://3ve12w8g26ll" path="res://scripts/Characters/Player/spectral_projectile.gd" id="1_sveij"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_projectile"]
+size = Vector2(18, 10)
+
+[node name="SpectralProjectile" type="Area2D"]
+collision_layer = 4
+collision_mask = 9
+script = ExtResource("1_sveij")
+
+[node name="Visual" type="Polygon2D" parent="."]
+color = Color(0.38, 0.78, 1, 0.9)
+polygon = PackedVector2Array(-9, 0, -2, -6, 9, -3, 9, 3, -2, 6)
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_projectile")
+
+[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-9, -6, 18, 12)

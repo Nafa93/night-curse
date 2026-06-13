@@ -1,0 +1,277 @@
+[gd_scene format=3 uid="uid://bj6mq0e3mdn08"]
+
+[ext_resource type="Script" uid="uid://ljcortjhn66u" path="res://scripts/Levels/level_draft.gd" id="1_4y20v"]
+[ext_resource type="PackedScene" uid="uid://b4r6ta2eg1sy7" path="res://scenes/Characters/Player/Player.tscn" id="2_4q8ap"]
+[ext_resource type="FontFile" uid="uid://crkq4qt3tc7u1" path="res://assets/fonts/nintendo-nes-font.ttf" id="3_7bjfl"]
+[ext_resource type="Texture2D" uid="uid://b4jrl2ivpygmd" path="res://assets/Items/life_heart_empty_16x16.png" id="4_wbfvv"]
+[ext_resource type="Texture2D" uid="uid://bu16xbq0lke7w" path="res://assets/Items/life_heart_16x16.png" id="5_jel35"]
+[ext_resource type="Texture2D" uid="uid://c0pu6k6g4te2x" path="res://assets/Items/key_icon_empty_16x16.png" id="6_344hc"]
+[ext_resource type="Texture2D" uid="uid://chbflxyyx65df" path="res://assets/Items/key_icon_16x16.png" id="7_j5wvy"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_box"]
+bg_color = Color(0, 0, 0, 1)
+border_width_left = 1
+border_width_top = 1
+border_width_right = 1
+border_width_bottom = 1
+border_color = Color(0.93, 0.93, 0.84, 1)
+
+[node name="LevelDraft" type="Node2D" unique_id=1350433231]
+script = ExtResource("1_4y20v")
+
+[node name="Player" parent="." unique_id=257405712 instance=ExtResource("2_4q8ap")]
+position = Vector2(34, 176)
+
+[node name="StartPosition" type="Marker2D" parent="." unique_id=901888778]
+position = Vector2(34, 176)
+
+[node name="HUD" type="CanvasLayer" parent="." unique_id=1217515411]
+
+[node name="Panel" type="Control" parent="HUD" unique_id=693172322]
+layout_mode = 3
+anchors_preset = 10
+anchor_right = 1.0
+offset_bottom = 52.0
+grow_horizontal = 2
+
+[node name="LivesBox" type="Panel" parent="HUD/Panel" unique_id=622960194]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 2.0
+offset_right = 84.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_box")
+
+[node name="Title" type="Label" parent="HUD/Panel/LivesBox" unique_id=466313711]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 80.0
+offset_bottom = 13.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("3_7bjfl")
+theme_override_font_sizes/font_size = 8
+text = "LIVES"
+horizontal_alignment = 1
+
+[node name="Life1" type="Control" parent="HUD/Panel/LivesBox" unique_id=1873404477]
+anchors_preset = 0
+offset_left = 13.0
+offset_top = 17.0
+offset_right = 29.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="HUD/Panel/LivesBox/Life1" unique_id=1445011156]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_wbfvv")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/LivesBox/Life1" unique_id=46178400]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_jel35")
+expand_mode = 1
+
+[node name="Life2" type="Control" parent="HUD/Panel/LivesBox" unique_id=2146997947]
+anchors_preset = 0
+offset_left = 33.0
+offset_top = 17.0
+offset_right = 49.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="HUD/Panel/LivesBox/Life2" unique_id=1061968783]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_wbfvv")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/LivesBox/Life2" unique_id=948096083]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_jel35")
+expand_mode = 1
+
+[node name="Life3" type="Control" parent="HUD/Panel/LivesBox" unique_id=1031882036]
+anchors_preset = 0
+offset_left = 53.0
+offset_top = 17.0
+offset_right = 69.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="HUD/Panel/LivesBox/Life3" unique_id=2131498306]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("4_wbfvv")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/LivesBox/Life3" unique_id=836533754]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_jel35")
+expand_mode = 1
+
+[node name="PointsBox" type="Panel" parent="HUD/Panel" unique_id=288737935]
+layout_mode = 0
+offset_left = 87.0
+offset_top = 2.0
+offset_right = 169.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_box")
+
+[node name="Title" type="Label" parent="HUD/Panel/PointsBox" unique_id=443725694]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 80.0
+offset_bottom = 13.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("3_7bjfl")
+theme_override_font_sizes/font_size = 8
+text = "SCORE"
+horizontal_alignment = 1
+
+[node name="PointsValue" type="Label" parent="HUD/Panel/PointsBox" unique_id=1293483895]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 19.0
+offset_right = 80.0
+offset_bottom = 30.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("3_7bjfl")
+theme_override_font_sizes/font_size = 8
+text = "000000"
+horizontal_alignment = 1
+
+[node name="KeysBox" type="Panel" parent="HUD/Panel" unique_id=889846080]
+layout_mode = 0
+offset_left = 172.0
+offset_top = 2.0
+offset_right = 254.0
+offset_bottom = 40.0
+theme_override_styles/panel = SubResource("StyleBoxFlat_hud_box")
+
+[node name="Title" type="Label" parent="HUD/Panel/KeysBox" unique_id=1058916361]
+layout_mode = 0
+offset_left = 2.0
+offset_top = 3.0
+offset_right = 80.0
+offset_bottom = 13.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("3_7bjfl")
+theme_override_font_sizes/font_size = 8
+text = "KEYS"
+horizontal_alignment = 1
+
+[node name="Key1" type="Control" parent="HUD/Panel/KeysBox" unique_id=1400029282]
+anchors_preset = 0
+offset_left = 22.0
+offset_top = 17.0
+offset_right = 38.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="HUD/Panel/KeysBox/Key1" unique_id=1810928813]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_344hc")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/KeysBox/Key1" unique_id=576137170]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_j5wvy")
+expand_mode = 1
+
+[node name="Key2" type="Control" parent="HUD/Panel/KeysBox" unique_id=2041962551]
+anchors_preset = 0
+offset_left = 44.0
+offset_top = 17.0
+offset_right = 60.0
+offset_bottom = 33.0
+
+[node name="Empty" type="TextureRect" parent="HUD/Panel/KeysBox/Key2" unique_id=1777702912]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("6_344hc")
+expand_mode = 1
+
+[node name="Full" type="TextureRect" parent="HUD/Panel/KeysBox/Key2" unique_id=1456209654]
+layout_mode = 1
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("7_j5wvy")
+expand_mode = 1
+
+[node name="MessageLabel" type="Label" parent="HUD/Panel" unique_id=131856955]
+layout_mode = 0
+offset_left = 4.0
+offset_top = 42.0
+offset_right = 252.0
+offset_bottom = 52.0
+theme_override_colors/font_color = Color(0.93, 0.24, 0.25, 1)
+theme_override_fonts/font = ExtResource("3_7bjfl")
+theme_override_font_sizes/font_size = 8
+horizontal_alignment = 1
+
+[node name="GameOverScreen" type="CanvasLayer" parent="." unique_id=1000607569]
+process_mode = 3
+layer = 20
+visible = false
+
+[node name="Background" type="ColorRect" parent="GameOverScreen" unique_id=463632099]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="Label" type="Label" parent="GameOverScreen" unique_id=971127309]
+offset_left = 8.0
+offset_top = 105.0
+offset_right = 248.0
+offset_bottom = 133.0
+theme_override_colors/font_color = Color(0.72, 0.12, 0.16, 1)
+theme_override_fonts/font = ExtResource("3_7bjfl")
+theme_override_font_sizes/font_size = 20
+text = "GAME OVER"
+horizontal_alignment = 1
