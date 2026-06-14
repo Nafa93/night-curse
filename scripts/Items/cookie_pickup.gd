@@ -35,11 +35,16 @@ func _on_body_entered(body: Node2D) -> void:
 		queue_free()
 
 func _resolve_collectible_id() -> String:
-	if not collectible_id.is_empty():
-		return collectible_id
-
 	var scene_path := get_tree().current_scene.scene_file_path
-	return "%s:%s" % [scene_path, get_path()]
+	var position_key := "%d,%d" % [
+		roundi(global_position.x),
+		roundi(global_position.y)
+	]
+
+	if not collectible_id.is_empty():
+		return "%s:%s:%s" % [scene_path, collectible_id, position_key]
+
+	return "%s:%s" % [scene_path, position_key]
 
 func _award_points() -> void:
 	var level := get_tree().current_scene
