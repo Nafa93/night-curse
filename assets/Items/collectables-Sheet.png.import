@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://bu16xbq0lke7w"
-path="res://.godot/imported/life_heart_16x16.png-03daf2fadcc9d5549aa97594ae3dc585.ctex"
+uid="uid://b3fjgxw34myh6"
+path="res://.godot/imported/collectables-Sheet.png-52111d275abaf0ebce7ccfc34a7140f4.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Items/life_heart_16x16.png"
-dest_files=["res://.godot/imported/life_heart_16x16.png-03daf2fadcc9d5549aa97594ae3dc585.ctex"]
+source_file="res://assets/Items/collectables-Sheet.png"
+dest_files=["res://.godot/imported/collectables-Sheet.png-52111d275abaf0ebce7ccfc34a7140f4.ctex"]
 
 [params]
 
