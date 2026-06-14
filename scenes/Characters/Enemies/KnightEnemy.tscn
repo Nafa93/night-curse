@@ -1,0 +1,128 @@
+[gd_scene format=3 uid="uid://dw10s2p37cyv8"]
+
+[ext_resource type="Script" uid="uid://bwsb13m3rrxmy" path="res://scripts/Characters/Enemies/knight_enemy.gd" id="1_script"]
+[ext_resource type="Texture2D" uid="uid://dnjxmbxq0em5b" path="res://assets/Characters/Enemies/enemy-knight-Sheet.png" id="2_texture"]
+[ext_resource type="Texture2D" uid="uid://dqv4g2dvwcfuh" path="res://assets/Characters/Enemies/enemy-knight-rhand-Sheet.png" id="3_attack_texture"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_walk_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_knight"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_walk_2")
+}],
+"loop": true,
+"name": &"walk",
+"speed": 4.0
+}]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_1"]
+atlas = ExtResource("3_attack_texture")
+region = Rect2(0, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_2"]
+atlas = ExtResource("3_attack_texture")
+region = Rect2(32, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_3"]
+atlas = ExtResource("3_attack_texture")
+region = Rect2(64, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack_4"]
+atlas = ExtResource("3_attack_texture")
+region = Rect2(96, 0, 32, 32)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_attack"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_3")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack_4")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 9.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(19, 27)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_damage"]
+size = Vector2(21, 27)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
+size = Vector2(38, 20)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_detection"]
+size = Vector2(80, 48)
+
+[node name="KnightEnemy" type="CharacterBody2D" unique_id=828594]
+collision_layer = 8
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=1502109052]
+z_index = 1
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_knight")
+animation = &"walk"
+
+[node name="AttackVisual" type="AnimatedSprite2D" parent="." unique_id=447764523]
+texture_filter = 1
+scale = Vector2(2.4, 2.4)
+sprite_frames = SubResource("SpriteFrames_attack")
+animation = &"attack"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1396003547]
+position = Vector2(0, 1.5)
+shape = SubResource("RectangleShape2D_body")
+
+[node name="DamageArea" type="Area2D" parent="." unique_id=1371037131]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea" unique_id=1115452648]
+position = Vector2(0, 1.5)
+shape = SubResource("RectangleShape2D_damage")
+
+[node name="AttackArea" type="Area2D" parent="." unique_id=919667899]
+collision_layer = 0
+collision_mask = 2
+monitoring = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=1873943083]
+position = Vector2(-9, -1)
+shape = SubResource("RectangleShape2D_attack")
+disabled = true
+
+[node name="DetectionArea" type="Area2D" parent="." unique_id=125094314]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DetectionArea" unique_id=1160063150]
+position = Vector2(0, -2)
+shape = SubResource("RectangleShape2D_detection")
+
+[node name="FloorCheck" type="RayCast2D" parent="." unique_id=557993348]
+position = Vector2(-12, 10)
+target_position = Vector2(0, 16)
+
+[node name="WallCheck" type="RayCast2D" parent="." unique_id=1109040325]
+target_position = Vector2(-18, 0)

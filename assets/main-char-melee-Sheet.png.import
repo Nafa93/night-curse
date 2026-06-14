@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://yquj31mninla"
-path="res://.godot/imported/main-char-melee-Sheet.png-55606e62e9c25518b842813df2183819.ctex"
+uid="uid://k5r805ppjt7k"
+path="res://.godot/imported/main-char-melee-Sheet.png-29cba41b440c2266e5a1c2aac47c1e08.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Characters/main-char-melee-Sheet.png"
-dest_files=["res://.godot/imported/main-char-melee-Sheet.png-55606e62e9c25518b842813df2183819.ctex"]
+source_file="res://assets/main-char-melee-Sheet.png"
+dest_files=["res://.godot/imported/main-char-melee-Sheet.png-29cba41b440c2266e5a1c2aac47c1e08.ctex"]
 
 [params]
 

@@ -10,8 +10,10 @@ const FLOATING_SCORE_SCENE := preload("res://scenes/Levels/FloatingScore.tscn")
 @onready var camera: Camera2D = $Player/Camera2D
 @onready var hud: GameHUD = $HUD
 @onready var game_over_screen: CanvasLayer = $GameOverScreen
-@onready var regular_world: TileMapLayer = $Worlds/Regular
-@onready var otherside_world: TileMapLayer = $Worlds/Otherside
+@onready var regular_world: WorldContainer = $Worlds/Regular
+@onready var otherside_world: WorldContainer = $Worlds/Otherside
+@onready var regular_tile_map: TileMapLayer = $Worlds/Regular/TileMap
+@onready var otherside_tile_map: TileMapLayer = $Worlds/Otherside/TileMap
 @onready var world_transition: WorldTransition = $WorldTransition
 
 var is_otherside := false
@@ -33,7 +35,7 @@ func _ready() -> void:
 func _configure_camera() -> void:
 	base_camera_zoom = camera.zoom
 	camera.position.y = camera_vertical_offset
-	_update_camera_limits(regular_world)
+	_update_camera_limits(regular_tile_map)
 
 func _update_camera_limits(world: TileMapLayer) -> void:
 	var world_bounds: Rect2 = _get_tilemap_bounds(world)
@@ -99,18 +101,21 @@ func _update_points_label() -> void:
 	hud.update_score(points)
 
 func _apply_world_state() -> void:
-	regular_world.visible = not is_otherside
-	regular_world.enabled = not is_otherside
-	regular_world.collision_enabled = not is_otherside
-	otherside_world.visible = is_otherside
-	otherside_world.enabled = is_otherside
-	otherside_world.collision_enabled = is_otherside
-	_update_camera_limits(otherside_world if is_otherside else regular_world)
-
 	var is_regular := not is_otherside
+	regular_world.set_world_active(is_regular)
+	otherside_world.set_world_active(is_otherside)
+	_update_camera_limits(otherside_tile_map if is_otherside else regular_tile_map)
+
 	player.set_day_state(is_regular)
-	get_tree().call_group("day_night_reactive", "set_day_state", is_regular)
+	_update_shared_world_reactive_nodes(is_regular)
 	world_changed.emit(is_otherside)
+
+func _update_shared_world_reactive_nodes(is_regular: bool) -> void:
+	for node in get_tree().get_nodes_in_group("day_night_reactive"):
+		if regular_world.is_ancestor_of(node) or otherside_world.is_ancestor_of(node):
+			continue
+		if node.has_method("set_day_state"):
+			node.set_day_state(is_regular)
 
 func _on_player_lives_changed(lives: int, _max_lives: int) -> void:
 	hud.update_lives(lives)

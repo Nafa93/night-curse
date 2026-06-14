@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://dnjxmbxq0em5b"
-path="res://.godot/imported/enemy-knight-Sheet.png-994188701948771b06e7ac614c8bc582.ctex"
+uid="uid://deoo3h4vc765k"
+path="res://.godot/imported/Portal-Sheet.png-85d90b7b59378cef0c600e15e425597e.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Characters/Enemies/enemy-knight-Sheet.png"
-dest_files=["res://.godot/imported/enemy-knight-Sheet.png-994188701948771b06e7ac614c8bc582.ctex"]
+source_file="res://assets/Environment/Portal-Sheet.png"
+dest_files=["res://.godot/imported/Portal-Sheet.png-85d90b7b59378cef0c600e15e425597e.ctex"]
 
 [params]
 
