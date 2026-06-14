@@ -23,8 +23,13 @@ signal game_over
 @export var knockback_horizontal := 150.0
 @export var knockback_vertical := -180.0
 @export var hit_feedback_time := 0.3
+@export var standing_collision_size := Vector2(8.0, 28.0)
+@export var standing_collision_position := Vector2(-1.0, -1.0)
+@export var crouching_collision_size := Vector2(12.0, 20.0)
+@export var crouching_collision_position := Vector2(-1.0, 3.0)
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var attack_area: Area2D = $AttackArea
 @onready var attack_shape: CollisionShape2D = $AttackArea/CollisionShape2D
 @onready var attack_visual: AnimatedSprite2D = $AttackArea/Visual
@@ -53,6 +58,8 @@ var coyote_time_remaining := 0.0
 var held_jump_consumed := false
 
 func _ready() -> void:
+	body_collision.shape = body_collision.shape.duplicate()
+	_apply_collision_shape(false)
 	respawn_position = global_position
 	attack_area.area_entered.connect(_on_attack_area_entered)
 	attack_area.body_entered.connect(_on_attack_body_entered)
@@ -67,7 +74,7 @@ func set_day_state(is_day: bool) -> void:
 
 func prepare_for_world_transition() -> void:
 	velocity = Vector2.ZERO
-	is_crouching = false
+	_set_crouching(false, true)
 	_play_animation(&"Idle")
 
 func set_checkpoint(checkpoint_position: Vector2) -> void:
@@ -81,6 +88,7 @@ func restore_from_checkpoint(checkpoint_position: Vector2, restored_key_count: i
 	velocity = Vector2.ZERO
 	is_respawning = false
 	is_taking_damage = false
+	_set_crouching(false, true)
 	sprite.visible = true
 	_reset_movement_assists()
 	lives_changed.emit(lives, max_lives)
@@ -103,7 +111,11 @@ func _physics_process(delta: float) -> void:
 		_update_animation()
 		return
 
-	is_crouching = is_on_floor() and Input.is_action_pressed("ui_down")
+	var wants_to_crouch := is_on_floor() and Input.is_action_pressed("ui_down")
+	if wants_to_crouch:
+		_set_crouching(true)
+	elif is_crouching and _can_stand_up():
+		_set_crouching(false)
 
 	if is_on_floor() and (is_crouching or is_attacking):
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
@@ -246,6 +258,48 @@ func _play_animation(animation_name: StringName) -> void:
 
 func _has_stable_floor_support() -> bool:
 	return left_foot_check.is_colliding() and right_foot_check.is_colliding()
+
+func _set_crouching(should_crouch: bool, force := false) -> void:
+	if is_crouching == should_crouch:
+		return
+	if not should_crouch and not force and not _can_stand_up():
+		return
+
+	is_crouching = should_crouch
+	_apply_collision_shape(should_crouch)
+
+func _apply_collision_shape(use_crouching_shape: bool) -> void:
+	var rectangle := body_collision.shape as RectangleShape2D
+	if rectangle == null:
+		return
+
+	rectangle.size = (
+		crouching_collision_size
+		if use_crouching_shape
+		else standing_collision_size
+	)
+	body_collision.position = (
+		crouching_collision_position
+		if use_crouching_shape
+		else standing_collision_position
+	)
+
+func _can_stand_up() -> bool:
+	var standing_shape := RectangleShape2D.new()
+	standing_shape.size = standing_collision_size
+
+	var query := PhysicsShapeQueryParameters2D.new()
+	query.shape = standing_shape
+	query.transform = Transform2D(
+		global_rotation,
+		to_global(standing_collision_position)
+	)
+	query.collision_mask = collision_mask
+	query.exclude = [get_rid()]
+	query.collide_with_areas = false
+	query.collide_with_bodies = true
+
+	return get_world_2d().direct_space_state.intersect_shape(query, 1).is_empty()
 
 func collect_key() -> bool:
 	if key_count >= max_keys:

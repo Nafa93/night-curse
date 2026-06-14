@@ -26,16 +26,19 @@ const CANDY_PICKUP := preload("res://scenes/Items/CandyPickup.tscn")
 
 var start_x := 0.0
 var direction := -1.0
+var facing_direction := -1.0
 var is_active := false
 var is_world_enabled := true
 var is_near_screen := false
 var shoot_time_remaining := 0.0
 var tracked_target: CharacterBody2D
+var player_target: CharacterBody2D
 var base_collision_layer := 8
 
 func _ready() -> void:
 	start_x = global_position.x
 	direction = 1.0 if starts_moving_right else -1.0
+	facing_direction = direction
 	base_collision_layer = collision_layer
 	damage_area.body_entered.connect(_on_damage_area_body_entered)
 	detection_area.body_entered.connect(_on_detection_body_entered)
@@ -43,8 +46,9 @@ func _ready() -> void:
 	activation_notifier.screen_entered.connect(_on_screen_entered)
 	activation_notifier.screen_exited.connect(_on_screen_exited)
 	add_to_group("day_night_reactive")
+	player_target = _find_player()
 	visual.play(&"walk")
-	_update_direction()
+	_update_facing_direction(direction)
 	_update_checks()
 	refresh_activation_state()
 
@@ -55,9 +59,13 @@ func _physics_process(delta: float) -> void:
 	if not is_on_floor():
 		velocity.y += gravity * delta
 
+	if not is_instance_valid(player_target):
+		player_target = _find_player()
+	if is_instance_valid(player_target):
+		_face_player()
+
 	shoot_time_remaining = maxf(shoot_time_remaining - delta, 0.0)
 	if is_instance_valid(tracked_target):
-		_face_target()
 		velocity.x = 0.0
 		if shoot_time_remaining <= 0.0:
 			_shoot()
@@ -86,7 +94,7 @@ func refresh_activation_state() -> void:
 	set_physics_process(is_active)
 	set_deferred("collision_layer", base_collision_layer if is_active else 0)
 	damage_area.set_deferred("monitoring", is_active)
-	detection_area.set_deferred("monitoring", is_active)
+	detection_area.set_deferred("monitoring", is_active and activation_notifier.is_on_screen())
 	if not is_active:
 		velocity = Vector2.ZERO
 		tracked_target = null
@@ -113,24 +121,32 @@ func _shoot() -> void:
 	var projectile := projectile_scene.instantiate()
 	get_parent().add_child(projectile)
 	projectile.global_position = muzzle.global_position
-	projectile.setup(direction)
+	projectile.setup(facing_direction)
 
-func _face_target() -> void:
-	var target_direction := signf(tracked_target.global_position.x - global_position.x)
-	if target_direction != 0.0 and target_direction != direction:
-		direction = target_direction
-		_update_direction()
-		_update_checks()
+func _face_player() -> void:
+	var target_direction := signf(player_target.global_position.x - global_position.x)
+	if target_direction != 0.0 and target_direction != facing_direction:
+		_update_facing_direction(target_direction)
+
+func _find_player() -> CharacterBody2D:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return null
+
+	var candidate := scene.find_child("Player", true, false)
+	if candidate is CharacterBody2D and candidate.has_method("take_damage"):
+		return candidate as CharacterBody2D
+	return null
 
 func _turn_around() -> void:
 	direction *= -1.0
 	start_x = global_position.x
-	_update_direction()
 	_update_checks()
 
-func _update_direction() -> void:
-	visual.flip_h = direction > 0.0
-	muzzle.position.x = 24.0 * direction
+func _update_facing_direction(new_direction: float) -> void:
+	facing_direction = new_direction
+	visual.flip_h = facing_direction > 0.0
+	muzzle.position.x = 24.0 * facing_direction
 
 func _update_checks() -> void:
 	floor_check.position.x = 17.0 * direction
@@ -155,7 +171,11 @@ func _try_drop_candy() -> void:
 	level.call_deferred("add_child", pickup)
 
 func _on_detection_body_entered(body: Node2D) -> void:
-	if body is CharacterBody2D and body.has_method("take_damage"):
+	if (
+		activation_notifier.is_on_screen()
+		and body is CharacterBody2D
+		and body.has_method("take_damage")
+	):
 		tracked_target = body as CharacterBody2D
 
 func _on_detection_body_exited(body: Node2D) -> void:
