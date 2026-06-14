@@ -70,6 +70,9 @@ func prepare_for_world_transition() -> void:
 	is_crouching = false
 	_play_animation(&"Idle")
 
+func set_checkpoint(checkpoint_position: Vector2) -> void:
+	respawn_position = checkpoint_position
+
 func _physics_process(delta: float) -> void:
 	if is_respawning:
 		return

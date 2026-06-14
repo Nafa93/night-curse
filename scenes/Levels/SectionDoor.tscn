@@ -1,29 +1,31 @@
 [gd_scene format=3]
 
 [ext_resource type="Script" path="res://scripts/Levels/section_door.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/Environment/section_door_16x48_sheet.png" id="2_texture"]
+[ext_resource type="Texture2D" uid="uid://bsmke6a5fmsbk" path="res://assets/Environment/doors-Sheet.png" id="2_texture"]
+[ext_resource type="TileSet" uid="uid://bpo6i70g5wglp" path="res://assets/Tilesets/tileset.tres" id="3_tileset"]
+[ext_resource type="Script" path="res://scripts/Levels/door_backdrop.gd" id="4_backdrop"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_closed"]
 atlas = ExtResource("2_texture")
-region = Rect2(0, 0, 16, 48)
+region = Rect2(0, 0, 32, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_opening_1"]
 atlas = ExtResource("2_texture")
-region = Rect2(16, 0, 16, 48)
+region = Rect2(32, 0, 32, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_opening_2"]
 atlas = ExtResource("2_texture")
-region = Rect2(32, 0, 16, 48)
+region = Rect2(64, 0, 32, 48)
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_open"]
 atlas = ExtResource("2_texture")
-region = Rect2(48, 0, 16, 48)
+region = Rect2(96, 0, 32, 48)
 
 [sub_resource type="SpriteFrames" id="SpriteFrames_door"]
 animations = [{
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_closed")
+"texture": SubResource("AtlasTexture_open")
 }],
 "loop": false,
 "name": &"closed",
@@ -31,16 +33,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_open")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_opening_2")
+"texture": SubResource("AtlasTexture_closed")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_opening_1")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_closed")
+"texture": SubResource("AtlasTexture_opening_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_open")
 }],
 "loop": false,
 "name": &"closing",
@@ -48,7 +50,7 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_open")
+"texture": SubResource("AtlasTexture_closed")
 }],
 "loop": false,
 "name": &"open",
@@ -56,16 +58,16 @@ animations = [{
 }, {
 "frames": [{
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_closed")
-}, {
-"duration": 1.0,
-"texture": SubResource("AtlasTexture_opening_1")
+"texture": SubResource("AtlasTexture_open")
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_opening_2")
 }, {
 "duration": 1.0,
-"texture": SubResource("AtlasTexture_open")
+"texture": SubResource("AtlasTexture_opening_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_closed")
 }],
 "loop": false,
 "name": &"opening",
@@ -79,11 +81,27 @@ size = Vector2(12, 48)
 size = Vector2(96, 56)
 
 [node name="SectionDoor" type="StaticBody2D"]
+z_index = 1
 collision_layer = 1
 collision_mask = 0
 script = ExtResource("1_script")
 
-[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+[node name="DoorBackdrop" type="TileMapLayer" parent="."]
+z_index = 2
+position = Vector2(-8, -24)
+collision_enabled = false
+tile_set = ExtResource("3_tileset")
+script = ExtResource("4_backdrop")
+
+[node name="LeftDoor" type="AnimatedSprite2D" parent="."]
+position = Vector2(-17, 0)
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_door")
+animation = &"closed"
+flip_h = true
+
+[node name="RightDoor" type="AnimatedSprite2D" parent="."]
+position = Vector2(18, 0)
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_door")
 animation = &"closed"
