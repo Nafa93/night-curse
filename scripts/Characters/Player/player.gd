@@ -256,10 +256,14 @@ func collect_key() -> bool:
 	return true
 
 func use_key() -> bool:
-	if key_count <= 0:
+	return use_keys(1)
+
+func use_keys(amount: int) -> bool:
+	var keys_to_use := maxi(amount, 0)
+	if key_count < keys_to_use:
 		return false
 
-	key_count -= 1
+	key_count -= keys_to_use
 	keys_changed.emit(key_count, max_keys)
 	return true
 
