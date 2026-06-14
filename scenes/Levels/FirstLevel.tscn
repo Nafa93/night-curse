@@ -11,8 +11,6 @@
 [ext_resource type="PackedScene" path="res://scenes/Levels/SectionDoor.tscn" id="10_ldhju"]
 [ext_resource type="PackedScene" path="res://scenes/Levels/WorldTransition.tscn" id="10_world_transition"]
 [ext_resource type="PackedScene" path="res://scenes/Items/CookiePickup.tscn" id="11_cookie"]
-[ext_resource type="PackedScene" path="res://scenes/Characters/Enemies/RightHandMelee.tscn" id="12_buptn"]
-[ext_resource type="PackedScene" uid="uid://dw10s2p37cyv8" path="res://scenes/Characters/Enemies/KnightEnemy.tscn" id="13_vu6kc"]
 [ext_resource type="Script" uid="uid://du51i4l182iad" path="res://scripts/Levels/world_container.gd" id="14_world_container"]
 
 [node name="FirstLevel" type="Node2D" unique_id=1350433231]
@@ -43,18 +41,9 @@ tile_set = ExtResource("4_tec5p")
 [node name="GroundEnemy" parent="Worlds/Regular/Enemies" unique_id=1867934572 instance=ExtResource("8_lxoku")]
 position = Vector2(239, 186)
 
-[node name="GroundEnemy2" parent="Worlds/Regular/Enemies" unique_id=286475386 instance=ExtResource("8_lxoku")]
-position = Vector2(338, 187)
-
 [node name="FlyingEnemy" parent="Worlds/Regular/Enemies" unique_id=187400014 instance=ExtResource("6_lxoku")]
 position = Vector2(598, 112)
 starts_moving_right = false
-
-[node name="RightHandMelee" parent="Worlds/Regular/Enemies" unique_id=347936552 instance=ExtResource("12_buptn")]
-position = Vector2(934, 141)
-
-[node name="KnightEnemy" parent="Worlds/Regular/Enemies" unique_id=828594 instance=ExtResource("13_vu6kc")]
-position = Vector2(1454, 168)
 
 [node name="Items" type="Node2D" parent="Worlds/Regular" unique_id=1291461365]
 

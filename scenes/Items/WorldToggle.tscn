@@ -15,8 +15,27 @@ region = Rect2(0, 0, 32, 48)
 atlas = ExtResource("3_portal")
 region = Rect2(32, 0, 32, 48)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_portal_5"]
+atlas = ExtResource("3_portal")
+region = Rect2(128, 0, 32, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_portal_6"]
+atlas = ExtResource("3_portal")
+region = Rect2(160, 0, 32, 48)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_portal"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_portal_5")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_portal_6")
+}],
+"loop": true,
+"name": &"otherside",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_portal_1")
@@ -25,11 +44,12 @@ animations = [{
 "texture": SubResource("AtlasTexture_portal_2")
 }],
 "loop": true,
-"name": &"active",
+"name": &"regular",
 "speed": 5.0
 }]
 
 [node name="WorldToggle" type="Area2D" unique_id=617252354]
+z_index = 1
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("1_f7srf")
@@ -37,8 +57,8 @@ script = ExtResource("1_f7srf")
 [node name="Visual" type="AnimatedSprite2D" parent="." unique_id=751553751]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_portal")
-animation = &"active"
-autoplay = "active"
+animation = &"regular"
+autoplay = "regular"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=685129226]
 shape = SubResource("CircleShape2D_crxl5")
