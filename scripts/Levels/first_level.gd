@@ -70,8 +70,8 @@ func toggle_world() -> void:
 		return
 
 	is_world_transitioning = true
+	player.prepare_for_world_transition()
 	player.set_physics_process(false)
-	player.velocity = Vector2.ZERO
 	await world_transition.play(_switch_world)
 	player.set_physics_process(true)
 	is_world_transitioning = false

@@ -9,6 +9,12 @@ signal game_over
 @export var gravity := 900.0
 @export var acceleration := 720.0
 @export var friction := 900.0
+@export var jump_buffer_time := 0.12
+@export var direction_buffer_time := 0.12
+@export var coyote_time := 0.1
+@export var ledge_help_height := 8
+@export var ledge_help_reach := 7.0
+@export var ledge_help_nudge := 2.0
 @export var max_lives := 3
 @export var max_keys := 2
 @export var fall_limit_y := 420.0
@@ -24,6 +30,8 @@ signal game_over
 @onready var attack_visual: AnimatedSprite2D = $AttackArea/Visual
 @onready var left_foot_check: RayCast2D = $LeftFootCheck
 @onready var right_foot_check: RayCast2D = $RightFootCheck
+@onready var ledge_lower_check: RayCast2D = $LedgeLowerCheck
+@onready var ledge_upper_check: RayCast2D = $LedgeUpperCheck
 
 var lives := max_lives
 var respawn_position := Vector2.ZERO
@@ -38,6 +46,11 @@ var can_attack := true
 var is_attacking := false
 var is_crouching := false
 var is_taking_damage := false
+var jump_buffer_remaining := 0.0
+var direction_buffer_remaining := 0.0
+var buffered_direction := 0.0
+var coyote_time_remaining := 0.0
+var held_jump_consumed := false
 
 func _ready() -> void:
 	respawn_position = global_position
@@ -52,9 +65,19 @@ func set_day_state(is_day: bool) -> void:
 	is_day_form = is_day
 	modulate.a = 1.0
 
+func prepare_for_world_transition() -> void:
+	velocity = Vector2.ZERO
+	is_crouching = false
+	_play_animation(&"Idle")
+
 func _physics_process(delta: float) -> void:
 	if is_respawning:
 		return
+
+	var was_on_floor := is_on_floor()
+	var input_direction := Input.get_axis("ui_left", "ui_right")
+	_update_input_buffers(delta, input_direction)
+	_update_coyote_time(delta, was_on_floor)
 
 	if not is_on_floor():
 		velocity.y += gravity * delta
@@ -64,22 +87,37 @@ func _physics_process(delta: float) -> void:
 		_update_animation()
 		return
 
-	var direction := Input.get_axis("ui_left", "ui_right")
 	is_crouching = is_on_floor() and Input.is_action_pressed("ui_down")
 
-	if is_crouching or is_attacking:
+	if is_on_floor() and (is_crouching or is_attacking):
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
-	elif direction != 0.0:
-		facing_direction = sign(direction)
-		velocity.x = move_toward(velocity.x, direction * speed, acceleration * delta)
-		sprite.flip_h = facing_direction < 0.0
 	else:
-		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
+		var movement_direction := input_direction
+		if is_on_floor():
+			movement_direction = _get_ground_direction(input_direction)
 
-	if is_on_floor() and not is_crouching and not is_attacking and Input.is_action_just_pressed("jump"):
-		velocity.y = jump_velocity
+		if movement_direction != 0.0:
+			facing_direction = signf(movement_direction)
+			velocity.x = move_toward(
+				velocity.x,
+				facing_direction * speed,
+				acceleration * delta
+			)
+			sprite.flip_h = facing_direction < 0.0
+			if is_on_floor():
+				direction_buffer_remaining = 0.0
+		else:
+			velocity.x = move_toward(velocity.x, 0.0, friction * delta)
+
+	_try_consume_buffered_jump()
 
 	move_and_slide()
+	if not was_on_floor and is_on_floor():
+		coyote_time_remaining = coyote_time
+		_apply_buffered_landing_direction(delta, input_direction)
+		_try_consume_buffered_jump()
+	elif not is_on_floor():
+		_try_ledge_help(input_direction)
 	_update_animation()
 
 	if is_on_floor() and _has_stable_floor_support():
@@ -90,6 +128,89 @@ func _physics_process(delta: float) -> void:
 
 	if Input.is_action_just_pressed("attack"):
 		_start_attack()
+
+func _update_input_buffers(delta: float, input_direction: float) -> void:
+	if Input.is_action_just_pressed("jump"):
+		jump_buffer_remaining = jump_buffer_time
+	elif Input.is_action_pressed("jump") and not is_on_floor() and not held_jump_consumed:
+		jump_buffer_remaining = jump_buffer_time
+	else:
+		jump_buffer_remaining = maxf(jump_buffer_remaining - delta, 0.0)
+	if not Input.is_action_pressed("jump"):
+		held_jump_consumed = false
+
+	if input_direction != 0.0:
+		buffered_direction = signf(input_direction)
+		direction_buffer_remaining = direction_buffer_time
+	else:
+		direction_buffer_remaining = maxf(direction_buffer_remaining - delta, 0.0)
+
+func _update_coyote_time(delta: float, was_on_floor: bool) -> void:
+	if was_on_floor:
+		coyote_time_remaining = coyote_time
+	else:
+		coyote_time_remaining = maxf(coyote_time_remaining - delta, 0.0)
+
+func _get_ground_direction(input_direction: float) -> float:
+	if input_direction != 0.0:
+		return signf(input_direction)
+	if direction_buffer_remaining > 0.0:
+		return buffered_direction
+	return 0.0
+
+func _apply_buffered_landing_direction(delta: float, input_direction: float) -> void:
+	if is_crouching or is_attacking:
+		return
+
+	var landing_direction := _get_ground_direction(input_direction)
+	if landing_direction == 0.0:
+		return
+
+	facing_direction = landing_direction
+	sprite.flip_h = facing_direction < 0.0
+	velocity.x = move_toward(velocity.x, landing_direction * speed, acceleration * delta)
+	direction_buffer_remaining = 0.0
+
+func _try_consume_buffered_jump() -> void:
+	if (
+		jump_buffer_remaining <= 0.0
+		or coyote_time_remaining <= 0.0
+		or is_crouching
+		or is_attacking
+	):
+		return
+
+	velocity.y = jump_velocity
+	jump_buffer_remaining = 0.0
+	coyote_time_remaining = 0.0
+	held_jump_consumed = true
+
+func _try_ledge_help(input_direction: float) -> void:
+	if velocity.y <= 0.0 or input_direction == 0.0:
+		return
+
+	var direction := signf(input_direction)
+	ledge_lower_check.target_position = Vector2(ledge_help_reach * direction, 0.0)
+	ledge_upper_check.target_position = Vector2(ledge_help_reach * direction, 0.0)
+	ledge_lower_check.force_raycast_update()
+	ledge_upper_check.force_raycast_update()
+	if not ledge_lower_check.is_colliding() or ledge_upper_check.is_colliding():
+		return
+
+	for lift in range(1, ledge_help_height + 1):
+		var vertical_motion := Vector2(0.0, -float(lift))
+		if test_move(transform, vertical_motion):
+			continue
+
+		var lifted_transform := transform.translated(vertical_motion)
+		var horizontal_motion := Vector2(ledge_help_nudge * direction, 0.0)
+		if test_move(lifted_transform, horizontal_motion):
+			continue
+
+		position += vertical_motion + horizontal_motion
+		velocity.y = 0.0
+		apply_floor_snap()
+		return
 
 func _update_animation() -> void:
 	if is_attacking:
@@ -200,8 +321,16 @@ func _respawn_after_fall() -> void:
 	await _apply_life_loss()
 	global_position = respawn_position
 	velocity = Vector2.ZERO
+	_reset_movement_assists()
 	await _flash_player()
 	is_respawning = false
+
+func _reset_movement_assists() -> void:
+	jump_buffer_remaining = 0.0
+	direction_buffer_remaining = 0.0
+	buffered_direction = 0.0
+	coyote_time_remaining = 0.0
+	held_jump_consumed = false
 
 func _apply_life_loss() -> void:
 	lives -= 1
