@@ -11,7 +11,7 @@ const FLOATING_SCORE_SCENE := preload("res://scenes/Levels/FloatingScore.tscn")
 @onready var player: CharacterBody2D = $Player
 @onready var camera: Camera2D = $Player/Camera2D
 @onready var hud: GameHUD = $HUD
-@onready var game_over_screen: CanvasLayer = $GameOverScreen
+@onready var game_over_screen: GameOverScreen = $GameOverScreen
 @onready var regular_world: WorldContainer = $Worlds/Regular
 @onready var otherside_world: WorldContainer = $Worlds/Otherside
 @onready var regular_tile_map: TileMapLayer = $Worlds/Regular/TileMap
@@ -35,6 +35,9 @@ func _ready() -> void:
 	player.lives_changed.connect(_on_player_lives_changed)
 	player.keys_changed.connect(_on_player_keys_changed)
 	player.game_over.connect(_on_player_game_over)
+	game_over_screen.continue_selected.connect(_on_continue_selected)
+	game_over_screen.quit_selected.connect(_on_quit_selected)
+	_restore_checkpoint()
 	_on_player_lives_changed(player.lives, player.max_lives)
 	_on_player_keys_changed(player.key_count, player.max_keys)
 	_update_points_label()
@@ -128,7 +131,37 @@ func _complete_room_transition(door: SectionDoor) -> void:
 
 	var active_tile_map := otherside_tile_map if is_otherside else regular_tile_map
 	_update_camera_limits(active_tile_map, false)
-	player.set_checkpoint(door.get_checkpoint_position(player.global_position.y))
+	var checkpoint_position := door.get_checkpoint_position(player.global_position.y)
+	player.set_checkpoint(checkpoint_position)
+	CheckpointManager.save_checkpoint(
+		scene_file_path,
+		get_path_to(door),
+		checkpoint_position,
+		is_otherside,
+		points,
+		player.key_count
+	)
+
+func _restore_checkpoint() -> void:
+	if not CheckpointManager.has_checkpoint_for(scene_file_path):
+		return
+
+	var checkpoint_door := get_node_or_null(CheckpointManager.door_path) as SectionDoor
+	if checkpoint_door != null:
+		checkpoint_door.restore_locked_after_crossing()
+		if checkpoint_door.get_crossing_direction() > 0.0:
+			has_room_limit_left = true
+			room_limit_left = checkpoint_door.global_position.x
+		else:
+			has_room_limit_right = true
+			room_limit_right = checkpoint_door.global_position.x
+
+	is_otherside = CheckpointManager.is_otherside
+	points = CheckpointManager.score
+	player.restore_from_checkpoint(
+		CheckpointManager.spawn_position,
+		CheckpointManager.key_count
+	)
 
 func show_level_clear() -> void:
 	hud.show_message("LEVEL CLEAR")
@@ -177,10 +210,16 @@ func _on_player_game_over() -> void:
 		return
 
 	is_game_over = true
-	game_over_screen.visible = true
+	game_over_screen.show_menu()
 	get_tree().paused = true
-	await get_tree().create_timer(2.5, true, false, true).timeout
+
+func _on_continue_selected() -> void:
 	get_tree().paused = false
+	get_tree().reload_current_scene()
+
+func _on_quit_selected() -> void:
+	get_tree().paused = false
+	CheckpointManager.clear()
 	get_tree().change_scene_to_file("res://scenes/Levels/MainMenu.tscn")
 
 func _on_player_keys_changed(key_count: int, _max_keys: int) -> void:

@@ -22,6 +22,7 @@ func _unhandled_input(event: InputEvent) -> void:
 	elif event.is_action_pressed("start"):
 		if selected_option == 0:
 			CollectibleTracker.reset()
+			CheckpointManager.clear()
 			get_tree().change_scene_to_file(CONTROLS_SCENE)
 		else:
 			get_tree().quit()

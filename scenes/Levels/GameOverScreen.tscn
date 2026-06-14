@@ -1,11 +1,13 @@
-[gd_scene load_steps=2 format=3]
+[gd_scene load_steps=3 format=3]
 
 [ext_resource type="FontFile" path="res://assets/fonts/nintendo-nes-font.ttf" id="1_font"]
+[ext_resource type="Script" path="res://scripts/Levels/game_over_screen.gd" id="2_script"]
 
 [node name="GameOverScreen" type="CanvasLayer"]
 process_mode = 3
 layer = 20
 visible = false
+script = ExtResource("2_script")
 
 [node name="Background" type="ColorRect" parent="."]
 anchors_preset = 15
@@ -15,13 +17,60 @@ grow_horizontal = 2
 grow_vertical = 2
 color = Color(0, 0, 0, 1)
 
-[node name="Label" type="Label" parent="."]
+[node name="GameOverLabel" type="Label" parent="."]
 offset_left = 8.0
-offset_top = 105.0
+offset_top = 55.0
 offset_right = 248.0
-offset_bottom = 133.0
+offset_bottom = 83.0
 theme_override_colors/font_color = Color(0.72, 0.12, 0.16, 1)
 theme_override_fonts/font = ExtResource("1_font")
 theme_override_font_sizes/font_size = 20
 text = "GAME OVER"
+horizontal_alignment = 1
+
+[node name="ContinueLabel" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 104.0
+offset_right = 248.0
+offset_bottom = 120.0
+theme_override_colors/font_color = Color(0.93, 0.9, 0.72, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "CONTINUE?"
+horizontal_alignment = 1
+
+[node name="Menu" type="Control" parent="."]
+offset_left = 80.0
+offset_top = 136.0
+offset_right = 176.0
+offset_bottom = 184.0
+
+[node name="YesLabel" type="Label" parent="Menu"]
+offset_right = 96.0
+offset_bottom = 16.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "> YES"
+horizontal_alignment = 1
+
+[node name="NoLabel" type="Label" parent="Menu"]
+offset_top = 28.0
+offset_right = 96.0
+offset_bottom = 44.0
+theme_override_colors/font_color = Color(0.93, 0.93, 0.84, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 12
+text = "  NO"
+horizontal_alignment = 1
+
+[node name="Hint" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 218.0
+offset_right = 248.0
+offset_bottom = 230.0
+theme_override_colors/font_color = Color(0.55, 0.55, 0.58, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 8
+text = "ARROWS: SELECT   ENTER: START"
 horizontal_alignment = 1

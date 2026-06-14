@@ -98,6 +98,14 @@ func reset_door() -> void:
 	_inactive_door.play(&"closed")
 	_set_collision_enabled(true)
 
+func restore_locked_after_crossing() -> void:
+	_state = DoorState.LOCKED
+	_tracked_player = null
+	_configure_door_sides()
+	_active_door.play(&"closed")
+	_inactive_door.play(&"closed")
+	_set_collision_enabled(true)
+
 func is_open() -> bool:
 	return _state == DoorState.OPEN
 

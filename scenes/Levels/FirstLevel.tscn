@@ -45,6 +45,9 @@ position = Vector2(239, 186)
 position = Vector2(598, 112)
 starts_moving_right = false
 
+[node name="FlyingEnemy2" parent="Worlds/Regular/Enemies" unique_id=2044907761 instance=ExtResource("6_lxoku")]
+position = Vector2(1418, 161)
+
 [node name="Items" type="Node2D" parent="Worlds/Regular" unique_id=1291461365]
 
 [node name="Otherside" type="Node2D" parent="Worlds" unique_id=973383649]

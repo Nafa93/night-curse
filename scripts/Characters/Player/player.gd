@@ -73,6 +73,19 @@ func prepare_for_world_transition() -> void:
 func set_checkpoint(checkpoint_position: Vector2) -> void:
 	respawn_position = checkpoint_position
 
+func restore_from_checkpoint(checkpoint_position: Vector2, restored_key_count: int) -> void:
+	global_position = checkpoint_position
+	respawn_position = checkpoint_position
+	lives = max_lives
+	key_count = clampi(restored_key_count, 0, max_keys)
+	velocity = Vector2.ZERO
+	is_respawning = false
+	is_taking_damage = false
+	sprite.visible = true
+	_reset_movement_assists()
+	lives_changed.emit(lives, max_lives)
+	keys_changed.emit(key_count, max_keys)
+
 func _physics_process(delta: float) -> void:
 	if is_respawning:
 		return
@@ -269,7 +282,9 @@ func take_damage(source_position: Vector2 = Vector2.ZERO) -> void:
 	velocity = Vector2(knockback_direction * knockback_horizontal, knockback_vertical)
 
 	await _flash_player()
-	await _apply_life_loss()
+	var survived := _apply_life_loss()
+	if not survived:
+		return
 	is_taking_damage = false
 
 func _flash_player() -> void:
@@ -321,7 +336,9 @@ func _respawn_after_fall() -> void:
 		return
 
 	is_respawning = true
-	await _apply_life_loss()
+	var survived := _apply_life_loss()
+	if not survived:
+		return
 	global_position = respawn_position
 	velocity = Vector2.ZERO
 	_reset_movement_assists()
@@ -335,14 +352,12 @@ func _reset_movement_assists() -> void:
 	coyote_time_remaining = 0.0
 	held_jump_consumed = false
 
-func _apply_life_loss() -> void:
+func _apply_life_loss() -> bool:
 	lives -= 1
 	lives_changed.emit(lives, max_lives)
 
 	if lives <= 0:
 		game_over.emit()
-		lives = max_lives
-		respawn_position = get_parent().get_node("StartPosition").global_position
-		await get_tree().create_timer(0.8).timeout
+		return false
 
-	lives_changed.emit(lives, max_lives)
+	return true
