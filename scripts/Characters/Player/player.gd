@@ -17,12 +17,11 @@ signal game_over
 @export var knockback_horizontal := 150.0
 @export var knockback_vertical := -180.0
 @export var hit_feedback_time := 0.3
-@export var spectral_projectile_scene: PackedScene
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
 @onready var attack_area: Area2D = $AttackArea
 @onready var attack_shape: CollisionShape2D = $AttackArea/CollisionShape2D
-@onready var attack_visual: Polygon2D = $AttackArea/Visual
+@onready var attack_visual: AnimatedSprite2D = $AttackArea/Visual
 @onready var left_foot_check: RayCast2D = $LeftFootCheck
 @onready var right_foot_check: RayCast2D = $RightFootCheck
 
@@ -36,6 +35,8 @@ var has_key: bool:
 		return key_count > 0
 var facing_direction := 1.0
 var can_attack := true
+var is_attacking := false
+var is_crouching := false
 var is_taking_damage := false
 
 func _ready() -> void:
@@ -67,15 +68,18 @@ func _physics_process(delta: float) -> void:
 		return
 
 	var direction := Input.get_axis("ui_left", "ui_right")
+	is_crouching = is_on_floor() and Input.is_action_pressed("ui_down")
 
-	if direction != 0.0:
+	if is_crouching or is_attacking:
+		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
+	elif direction != 0.0:
 		facing_direction = sign(direction)
 		velocity.x = move_toward(velocity.x, direction * speed, acceleration * delta)
 		sprite.flip_h = facing_direction < 0.0
 	else:
 		velocity.x = move_toward(velocity.x, 0.0, friction * delta)
 
-	if is_on_floor() and Input.is_action_just_pressed("jump"):
+	if is_on_floor() and not is_crouching and not is_attacking and Input.is_action_just_pressed("jump"):
 		velocity.y = jump_velocity
 
 	move_and_slide()
@@ -91,8 +95,12 @@ func _physics_process(delta: float) -> void:
 		_start_attack()
 
 func _update_animation() -> void:
-	if not is_on_floor():
+	if is_attacking:
+		_play_animation(&"CrouchAttack" if is_crouching else &"Attack")
+	elif not is_on_floor():
 		_play_animation(&"Jump" if velocity.y < 0.0 else &"Fall")
+	elif is_crouching:
+		_play_animation(&"Crouch")
 	elif abs(velocity.x) > 1.0:
 		_play_animation(&"Walking")
 	else:
@@ -156,29 +164,23 @@ func _start_attack() -> void:
 		return
 
 	can_attack = false
-	if is_day_form:
-		await _start_melee_attack()
-	else:
-		_fire_spectral_projectile()
+	is_attacking = true
+	await _start_melee_attack()
+	is_attacking = false
 
 	await get_tree().create_timer(attack_cooldown).timeout
 	can_attack = true
 
 func _start_melee_attack() -> void:
-	attack_area.position.x = 26.0 * facing_direction
-	attack_visual.scale.x = facing_direction
+	attack_area.position = Vector2(
+		18.0 * facing_direction,
+		7.0 if is_crouching else 0.0
+	)
+	attack_visual.flip_h = facing_direction < 0.0
+	attack_visual.play(&"attack")
 	_set_attack_enabled(true)
 	await get_tree().create_timer(attack_time).timeout
 	_set_attack_enabled(false)
-
-func _fire_spectral_projectile() -> void:
-	if spectral_projectile_scene == null:
-		return
-
-	var projectile := spectral_projectile_scene.instantiate()
-	projectile.global_position = global_position + Vector2(24.0 * facing_direction, -8.0)
-	projectile.setup(facing_direction)
-	get_tree().current_scene.add_child(projectile)
 
 func _set_attack_enabled(is_enabled: bool) -> void:
 	attack_area.monitoring = is_enabled

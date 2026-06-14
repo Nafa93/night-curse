@@ -1,14 +1,43 @@
 [gd_scene format=3 uid="uid://b4r6ta2eg1sy7"]
 
 [ext_resource type="Script" uid="uid://b83mpvu7ynrt1" path="res://scripts/Characters/Player/player.gd" id="1_6f1ol"]
-[ext_resource type="PackedScene" uid="uid://dbv5e2id64pjm" path="res://scenes/Characters/Player/SpectralProjectile.tscn" id="2_fovrh"]
 [ext_resource type="Texture2D" uid="uid://diwi7or2n43br" path="res://assets/Characters/Player/main-char-Sheet.png" id="3_3li8b"]
+[ext_resource type="Texture2D" uid="uid://k5r805ppjt7k" path="res://assets/main-char-melee-Sheet.png" id="4_melee"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_i7ofd"]
 size = Vector2(8, 28)
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
 size = Vector2(21, 15)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_melee_1"]
+atlas = ExtResource("4_melee")
+region = Rect2(0, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_melee_2"]
+atlas = ExtResource("4_melee")
+region = Rect2(24, 0, 24, 24)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_melee_3"]
+atlas = ExtResource("4_melee")
+region = Rect2(48, 0, 24, 24)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_melee"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_melee_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_melee_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_melee_3")
+}],
+"loop": false,
+"name": &"attack",
+"speed": 16.6667
+}]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_mdl7e"]
 atlas = ExtResource("3_3li8b")
@@ -34,14 +63,38 @@ region = Rect2(32, 0, 32, 32)
 atlas = ExtResource("3_3li8b")
 region = Rect2(64, 0, 32, 32)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_attack"]
+atlas = ExtResource("3_3li8b")
+region = Rect2(192, 0, 32, 32)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_crouch_attack"]
+atlas = ExtResource("3_3li8b")
+region = Rect2(224, 0, 32, 32)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_6eyey"]
 animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_attack")
+}],
+"loop": false,
+"name": &"Attack",
+"speed": 5.0
+}, {
 "frames": [{
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_mdl7e")
 }],
 "loop": true,
 "name": &"Crouch",
+"speed": 5.0
+}, {
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_crouch_attack")
+}],
+"loop": false,
+"name": &"CrouchAttack",
 "speed": 5.0
 }, {
 "frames": [{
@@ -83,7 +136,6 @@ animations = [{
 [node name="Player" type="CharacterBody2D" unique_id=492698432]
 collision_layer = 2
 script = ExtResource("1_6f1ol")
-spectral_projectile_scene = ExtResource("2_fovrh")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=1474575413]
 position = Vector2(-1, -1)
@@ -94,11 +146,11 @@ collision_layer = 4
 collision_mask = 8
 monitoring = false
 
-[node name="Visual" type="Polygon2D" parent="AttackArea" unique_id=272940695]
-position = Vector2(0, 3.5)
-scale = Vector2(0.5714286, 0.74999994)
-color = Color(0.9, 0.86, 0.52, 1)
-polygon = PackedVector2Array(0, -10, 28, -10, 28, 10, 0, 10)
+[node name="Visual" type="AnimatedSprite2D" parent="AttackArea" unique_id=272940695]
+position = Vector2(0, -2)
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_melee")
+animation = &"attack"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="AttackArea" unique_id=730066826]
 position = Vector2(5.5, 3.5)
