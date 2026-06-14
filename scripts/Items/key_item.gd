@@ -1,8 +1,15 @@
 extends Area2D
 
+enum KeyVariant {
+	RED,
+	GOLD,
+}
+
 @export var score_value := 300
+@export var key_variant: KeyVariant = KeyVariant.RED
 
 @onready var prompt_label: Label = $PromptLabel
+@onready var visual: Sprite2D = $Sprite2D
 
 var player: Node = null
 var is_taken := false
@@ -11,6 +18,7 @@ func _ready() -> void:
 	body_entered.connect(_on_body_entered)
 	body_exited.connect(_on_body_exited)
 	prompt_label.visible = false
+	visual.frame = key_variant * 2
 
 func _process(_delta: float) -> void:
 	if is_taken or player == null:

@@ -124,6 +124,7 @@ position = Vector2(1861, 73)
 
 [node name="Otherside" type="Node2D" parent="Worlds" unique_id=973383649]
 process_mode = 4
+visible = false
 script = ExtResource("14_world_container")
 
 [node name="TileMap" type="TileMapLayer" parent="Worlds/Otherside" unique_id=462633411]
