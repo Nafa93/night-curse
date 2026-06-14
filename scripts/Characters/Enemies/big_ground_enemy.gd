@@ -1,6 +1,7 @@
 extends CharacterBody2D
 
 const SMALL_HEART_PICKUP := preload("res://scenes/Items/SmallHeartPickup.tscn")
+const CANDY_PICKUP := preload("res://scenes/Items/CandyPickup.tscn")
 
 @export var projectile_scene: PackedScene
 @export var speed := 28.0
@@ -11,6 +12,7 @@ const SMALL_HEART_PICKUP := preload("res://scenes/Items/SmallHeartPickup.tscn")
 @export var score_value := 300
 @export var shoot_cooldown := 1.5
 @export_range(0.0, 1.0, 0.01) var heart_drop_chance := 0.2
+@export_range(0.0, 1.0, 0.01) var candy_drop_chance := 0.15
 @export var active_in_corporeal_world := true
 @export var active_in_spectral_world := false
 
@@ -100,6 +102,7 @@ func take_hit() -> void:
 	elif level.has_method("add_points"):
 		level.add_points(score_value)
 	_try_drop_heart()
+	_try_drop_candy()
 	queue_free()
 
 func _shoot() -> void:
@@ -139,6 +142,15 @@ func _try_drop_heart() -> void:
 
 	var level := get_tree().current_scene as Node2D
 	var pickup: Area2D = SMALL_HEART_PICKUP.instantiate()
+	pickup.position = level.to_local(global_position)
+	level.call_deferred("add_child", pickup)
+
+func _try_drop_candy() -> void:
+	if randf() > candy_drop_chance:
+		return
+
+	var level := get_tree().current_scene as Node2D
+	var pickup: Area2D = CANDY_PICKUP.instantiate()
 	pickup.position = level.to_local(global_position)
 	level.call_deferred("add_child", pickup)
 

@@ -1,23 +1,23 @@
 [gd_scene load_steps=4 format=3]
 
-[ext_resource type="Script" path="res://scripts/Items/cookie_pickup.gd" id="1_script"]
+[ext_resource type="Script" path="res://scripts/Items/candy_pickup.gd" id="1_script"]
 [ext_resource type="Texture2D" path="res://assets/Items/collectables-Sheet.png" id="2_texture"]
 
-[sub_resource type="AtlasTexture" id="AtlasTexture_cookie"]
+[sub_resource type="AtlasTexture" id="AtlasTexture_candy"]
 atlas = ExtResource("2_texture")
-region = Rect2(24, 0, 24, 24)
+region = Rect2(0, 0, 24, 24)
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_cookie"]
+[sub_resource type="CircleShape2D" id="CircleShape2D_candy"]
 radius = 8.0
 
-[node name="CookiePickup" type="Area2D"]
+[node name="CandyPickup" type="Area2D"]
 collision_layer = 0
 collision_mask = 2
 script = ExtResource("1_script")
 
 [node name="Sprite2D" type="Sprite2D" parent="."]
 texture_filter = 1
-texture = SubResource("AtlasTexture_cookie")
+texture = SubResource("AtlasTexture_candy")
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_cookie")
+shape = SubResource("CircleShape2D_candy")
