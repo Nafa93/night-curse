@@ -50,10 +50,7 @@ func _ready() -> void:
 
 func set_day_state(is_day: bool) -> void:
 	is_day_form = is_day
-	if is_day:
-		modulate.a = 1.0
-	else:
-		modulate.a = 0.62
+	modulate.a = 1.0
 
 func _physics_process(delta: float) -> void:
 	if is_respawning:
