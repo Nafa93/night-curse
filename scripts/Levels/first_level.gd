@@ -7,6 +7,9 @@ const FLOATING_SCORE_SCENE := preload("res://scenes/Levels/FloatingScore.tscn")
 @export var camera_vertical_offset := -24.0
 @export var room_camera_transition_time := 0.9
 @export var room_camera_smoothing_speed := 3.0
+@export var camera_bounds_horizontal_padding := 32.0
+@export var camera_door_limit_inset := 8.0
+@export var camera_door_bounds_inset := 16.0
 
 @onready var player: CharacterBody2D = $Player
 @onready var camera: Camera2D = $Player/Camera2D
@@ -28,10 +31,12 @@ var has_room_limit_left := false
 var has_room_limit_right := false
 var room_limit_left := 0.0
 var room_limit_right := 0.0
+var section_doors: Array[SectionDoor] = []
+var last_camera_bounds_cell_x := 2147483647
 
 func _ready() -> void:
-	_configure_camera()
 	_connect_section_doors()
+	_configure_camera()
 	player.lives_changed.connect(_on_player_lives_changed)
 	player.keys_changed.connect(_on_player_keys_changed)
 	player.game_over.connect(_on_player_game_over)
@@ -43,6 +48,19 @@ func _ready() -> void:
 	_update_points_label()
 	_apply_world_state()
 
+func _process(_delta: float) -> void:
+	if is_game_over or is_world_transitioning:
+		return
+
+	var active_tile_map := otherside_tile_map if is_otherside else regular_tile_map
+	var player_cell := active_tile_map.local_to_map(
+		active_tile_map.to_local(player.global_position)
+	)
+	if player_cell.x == last_camera_bounds_cell_x:
+		return
+
+	_update_camera_limits(active_tile_map, false)
+
 func _configure_camera() -> void:
 	base_camera_zoom = camera.zoom
 	base_camera_smoothing_speed = camera.position_smoothing_speed
@@ -53,6 +71,7 @@ func _configure_camera() -> void:
 func _connect_section_doors() -> void:
 	for node in find_children("*", "SectionDoor", true, false):
 		var door := node as SectionDoor
+		section_doors.append(door)
 		door.locked.connect(_on_section_door_locked.bind(door))
 
 func _update_camera_limits(world: TileMapLayer, reset_smoothing := true) -> void:
@@ -64,17 +83,21 @@ func _update_camera_limits(world: TileMapLayer, reset_smoothing := true) -> void
 	)
 	var target_zoom: float = maxf(base_camera_zoom.x, minimum_zoom)
 	camera.zoom = Vector2(target_zoom, target_zoom)
-	var left_limit := floori(world_bounds.position.x)
-	var right_limit := ceili(world_bounds.end.x)
+	var room_bounds: Rect2 = _get_current_room_tilemap_bounds(world, world_bounds)
+	var left_limit := floori(room_bounds.position.x)
+	var right_limit := ceili(room_bounds.end.x)
 	if has_room_limit_left:
-		left_limit = floori(room_limit_left)
+		left_limit = maxi(left_limit, floori(room_limit_left))
 	if has_room_limit_right:
-		right_limit = ceili(room_limit_right)
+		right_limit = mini(right_limit, ceili(room_limit_right))
 
 	camera.limit_left = left_limit
-	camera.limit_top = floori(world_bounds.position.y)
+	camera.limit_top = floori(room_bounds.position.y)
 	camera.limit_right = right_limit
-	camera.limit_bottom = ceili(world_bounds.end.y)
+	camera.limit_bottom = ceili(room_bounds.end.y)
+	last_camera_bounds_cell_x = world.local_to_map(
+		world.to_local(player.global_position)
+	).x
 	if reset_smoothing:
 		camera.reset_smoothing()
 
@@ -90,6 +113,79 @@ func _get_tilemap_bounds(layer: TileMapLayer) -> Rect2:
 	var top_left := layer.to_global(first_cell_center - half_tile)
 	var bottom_right := layer.to_global(last_cell_center + half_tile)
 	return Rect2(top_left, bottom_right - top_left)
+
+func _get_current_room_tilemap_bounds(layer: TileMapLayer, world_bounds: Rect2) -> Rect2:
+	var room_left := world_bounds.position.x
+	var room_right := world_bounds.end.x
+	var player_x := player.global_position.x
+	var has_left_door := false
+	var has_right_door := false
+
+	for door in section_doors:
+		if not is_instance_valid(door) or not door.creates_room_boundary:
+			continue
+
+		var door_x := door.global_position.x
+		if door_x <= player_x:
+			if door_x > room_left:
+				room_left = door_x
+				has_left_door = true
+		else:
+			if door_x < room_right:
+				room_right = door_x
+				has_right_door = true
+
+	var camera_room_left := room_left + (
+		camera_door_limit_inset if has_left_door else 0.0
+	)
+	var camera_room_right := room_right - (
+		camera_door_limit_inset if has_right_door else 0.0
+	)
+	var bounds_sample_left := room_left + (
+		camera_door_bounds_inset if has_left_door else 0.0
+	)
+	var bounds_sample_right := room_right - (
+		camera_door_bounds_inset if has_right_door else 0.0
+	)
+
+	var half_tile := Vector2(layer.tile_set.tile_size) * 0.5
+	var half_view_width := get_viewport_rect().size.x / camera.zoom.x * 0.5
+	var minimum_center_x := camera_room_left + half_view_width
+	var maximum_center_x := camera_room_right - half_view_width
+	var camera_center_x := player_x + camera.position.x
+	if minimum_center_x <= maximum_center_x:
+		camera_center_x = clampf(camera_center_x, minimum_center_x, maximum_center_x)
+	else:
+		camera_center_x = (camera_room_left + camera_room_right) * 0.5
+
+	var sample_left := maxf(
+		bounds_sample_left,
+		camera_center_x - half_view_width - camera_bounds_horizontal_padding
+	)
+	var sample_right := minf(
+		bounds_sample_right,
+		camera_center_x + half_view_width + camera_bounds_horizontal_padding
+	)
+	var room_top := INF
+	var room_bottom := -INF
+	for cell in layer.get_used_cells():
+		var cell_center := layer.to_global(layer.map_to_local(cell))
+		if cell_center.x < sample_left or cell_center.x > sample_right:
+			continue
+
+		room_top = minf(room_top, cell_center.y - half_tile.y)
+		room_bottom = maxf(room_bottom, cell_center.y + half_tile.y)
+
+	if is_inf(room_top) or is_inf(room_bottom):
+		return world_bounds
+
+	return Rect2(
+		Vector2(camera_room_left, room_top),
+		Vector2(
+			camera_room_right - camera_room_left,
+			room_bottom - room_top
+		)
+	)
 
 func toggle_world() -> void:
 	if is_world_transitioning:

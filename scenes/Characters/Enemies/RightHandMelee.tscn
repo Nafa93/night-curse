@@ -93,3 +93,6 @@ target_position = Vector2(0, 16)
 
 [node name="WallCheck" type="RayCast2D" parent="."]
 target_position = Vector2(-18, 0)
+
+[node name="ActivationNotifier" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-48, -32, 96, 64)

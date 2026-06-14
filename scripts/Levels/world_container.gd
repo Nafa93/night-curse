@@ -22,6 +22,10 @@ func set_world_active(is_active: bool) -> void:
 		body.collision_layer = state.x if is_active else 0
 		body.collision_mask = state.y if is_active else 0
 
+	for node in find_children("*", "", true, false):
+		if node.has_method("refresh_activation_state"):
+			node.refresh_activation_state()
+
 func _cache_collision_states() -> void:
 	for collision_object in find_children("*", "CollisionObject2D", true, false):
 		var body := collision_object as CollisionObject2D

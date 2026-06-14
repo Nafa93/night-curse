@@ -54,6 +54,5 @@ collision_mask = 2
 position = Vector2(0, 0.75)
 shape = SubResource("RectangleShape2D_damage")
 
-[node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="." unique_id=144061839]
-position = Vector2(-4, 5)
-rect = Rect2(-9, -14, 27, 19)
+[node name="ActivationNotifier" type="VisibleOnScreenNotifier2D" parent="." unique_id=144061839]
+rect = Rect2(-48, -32, 96, 64)

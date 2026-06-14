@@ -20,10 +20,13 @@ const SMALL_HEART_PICKUP := preload("res://scenes/Items/SmallHeartPickup.tscn")
 @onready var damage_area: Area2D = $DamageArea
 @onready var detection_area: Area2D = $DetectionArea
 @onready var muzzle: Marker2D = $Muzzle
+@onready var activation_notifier: VisibleOnScreenNotifier2D = $ActivationNotifier
 
 var start_x := 0.0
 var direction := -1.0
-var is_active := true
+var is_active := false
+var is_world_enabled := true
+var is_near_screen := false
 var shoot_time_remaining := 0.0
 var tracked_target: CharacterBody2D
 var base_collision_layer := 8
@@ -35,10 +38,13 @@ func _ready() -> void:
 	damage_area.body_entered.connect(_on_damage_area_body_entered)
 	detection_area.body_entered.connect(_on_detection_body_entered)
 	detection_area.body_exited.connect(_on_detection_body_exited)
+	activation_notifier.screen_entered.connect(_on_screen_entered)
+	activation_notifier.screen_exited.connect(_on_screen_exited)
 	add_to_group("day_night_reactive")
 	visual.play(&"walk")
 	_update_direction()
 	_update_checks()
+	refresh_activation_state()
 
 func _physics_process(delta: float) -> void:
 	if not is_active:
@@ -69,11 +75,19 @@ func _physics_process(delta: float) -> void:
 		_turn_around()
 
 func set_day_state(is_corporeal: bool) -> void:
-	is_active = active_in_corporeal_world if is_corporeal else active_in_spectral_world
-	collision_layer = base_collision_layer if is_active else 0
+	is_world_enabled = active_in_corporeal_world if is_corporeal else active_in_spectral_world
+	visible = is_world_enabled
+	refresh_activation_state()
+
+func refresh_activation_state() -> void:
+	is_active = is_world_enabled and is_near_screen and is_visible_in_tree()
+	set_physics_process(is_active)
+	set_deferred("collision_layer", base_collision_layer if is_active else 0)
 	damage_area.set_deferred("monitoring", is_active)
 	detection_area.set_deferred("monitoring", is_active)
-	visible = is_active
+	if not is_active:
+		velocity = Vector2.ZERO
+		tracked_target = null
 
 func take_hit() -> void:
 	health -= 1
@@ -123,9 +137,10 @@ func _try_drop_heart() -> void:
 	if randf() > heart_drop_chance:
 		return
 
+	var level := get_tree().current_scene as Node2D
 	var pickup: Area2D = SMALL_HEART_PICKUP.instantiate()
-	get_tree().current_scene.add_child(pickup)
-	pickup.global_position = global_position
+	pickup.position = level.to_local(global_position)
+	level.call_deferred("add_child", pickup)
 
 func _on_detection_body_entered(body: Node2D) -> void:
 	if body is CharacterBody2D and body.has_method("take_damage"):
@@ -138,3 +153,11 @@ func _on_detection_body_exited(body: Node2D) -> void:
 func _on_damage_area_body_entered(body: Node2D) -> void:
 	if is_active and body.has_method("take_damage"):
 		body.take_damage(global_position)
+
+func _on_screen_entered() -> void:
+	is_near_screen = true
+	refresh_activation_state()
+
+func _on_screen_exited() -> void:
+	is_near_screen = false
+	refresh_activation_state()
