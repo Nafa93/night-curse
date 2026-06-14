@@ -20,29 +20,24 @@ enum DoorState {
 @export var creates_room_boundary := true
 @export var checkpoint_distance := 32.0
 
-@onready var left_door: AnimatedSprite2D = $LeftDoor
-@onready var right_door: AnimatedSprite2D = $RightDoor
+@onready var door_sprite: AnimatedSprite2D = $RightDoor
 @onready var collision_shape: CollisionShape2D = $CollisionShape2D
 @onready var detection_area: Area2D = $DetectionArea
 
 var _state := DoorState.CLOSED
 var _tracked_player: CharacterBody2D
-var _active_door: AnimatedSprite2D
-var _inactive_door: AnimatedSprite2D
 
 func _ready() -> void:
 	detection_area.body_entered.connect(_on_detection_body_entered)
 	detection_area.body_exited.connect(_on_detection_body_exited)
-	_configure_door_sides()
 
 	if starts_open:
 		_state = DoorState.OPEN
-		_active_door.play(&"open")
+		door_sprite.play(&"open")
 		_set_collision_enabled(false)
 	else:
-		_active_door.play(&"closed")
+		door_sprite.play(&"closed")
 		_set_collision_enabled(true)
-	_inactive_door.play(&"closed")
 
 func _physics_process(_delta: float) -> void:
 	if _state != DoorState.OPEN or not is_instance_valid(_tracked_player):
@@ -61,8 +56,8 @@ func open_door() -> void:
 		return
 
 	_state = DoorState.OPENING
-	_active_door.play(&"opening")
-	await _active_door.animation_finished
+	door_sprite.play(&"opening")
+	await door_sprite.animation_finished
 
 	if _state != DoorState.OPENING:
 		return
@@ -77,8 +72,8 @@ func close_door(lock_after_closing := false) -> void:
 
 	_state = DoorState.CLOSING
 	_set_collision_enabled(true)
-	_active_door.play(&"closing")
-	await _active_door.animation_finished
+	door_sprite.play(&"closing")
+	await door_sprite.animation_finished
 
 	if _state != DoorState.CLOSING:
 		return
@@ -93,17 +88,13 @@ func close_door(lock_after_closing := false) -> void:
 func reset_door() -> void:
 	_state = DoorState.CLOSED
 	_tracked_player = null
-	_configure_door_sides()
-	_active_door.play(&"closed")
-	_inactive_door.play(&"closed")
+	door_sprite.play(&"closed")
 	_set_collision_enabled(true)
 
 func restore_locked_after_crossing() -> void:
 	_state = DoorState.LOCKED
 	_tracked_player = null
-	_configure_door_sides()
-	_active_door.play(&"closed")
-	_inactive_door.play(&"closed")
+	door_sprite.play(&"closed")
 	_set_collision_enabled(true)
 
 func is_open() -> bool:
@@ -122,11 +113,7 @@ func get_checkpoint_position(player_y: float) -> Vector2:
 	)
 
 func get_active_door() -> AnimatedSprite2D:
-	return _active_door
-
-func _configure_door_sides() -> void:
-	_active_door = right_door if opens_from_left else left_door
-	_inactive_door = left_door if opens_from_left else right_door
+	return door_sprite
 
 func _on_detection_body_entered(body: Node2D) -> void:
 	if _state != DoorState.CLOSED or not _is_player(body):

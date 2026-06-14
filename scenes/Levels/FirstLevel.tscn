@@ -8,7 +8,7 @@
 [ext_resource type="PackedScene" path="res://scenes/Levels/GameOverScreen.tscn" id="8_game_over"]
 [ext_resource type="PackedScene" uid="uid://dps4tl3yk2a8n" path="res://scenes/Characters/Enemies/GroundEnemy.tscn" id="8_lxoku"]
 [ext_resource type="PackedScene" path="res://scenes/Levels/HUD.tscn" id="9_hud"]
-[ext_resource type="PackedScene" path="res://scenes/Levels/SectionDoor.tscn" id="10_ldhju"]
+[ext_resource type="PackedScene" uid="uid://bav3l8g067qul" path="res://scenes/Levels/SectionDoor.tscn" id="10_ldhju"]
 [ext_resource type="PackedScene" path="res://scenes/Levels/WorldTransition.tscn" id="10_world_transition"]
 [ext_resource type="PackedScene" path="res://scenes/Items/CookiePickup.tscn" id="11_cookie"]
 [ext_resource type="Script" uid="uid://du51i4l182iad" path="res://scripts/Levels/world_container.gd" id="14_world_container"]
@@ -71,7 +71,7 @@ position = Vector2(170, 158)
 collectible_id = "first_level_cookie_01"
 
 [node name="SectionDoor" parent="." unique_id=1322934297 instance=ExtResource("10_ldhju")]
-position = Vector2(1031, 184)
+position = Vector2(1045, 185)
 
 [node name="WorldToggle" parent="." unique_id=617252354 instance=ExtResource("6_p2c6n")]
 position = Vector2(1191, 180)
