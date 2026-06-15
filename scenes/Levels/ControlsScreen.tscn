@@ -50,7 +50,7 @@ offset_bottom = 88.0
 theme_override_colors/font_color = Color(0.94, 0.94, 0.84, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 8
-text = "LEFT / RIGHT    MOVE"
+text = "LEFT - RIGHT    MOVE"
 
 [node name="Interact" type="Label" parent="."]
 layout_mode = 0
@@ -117,5 +117,5 @@ offset_bottom = 230.0
 theme_override_colors/font_color = Color(0.55, 0.55, 0.58, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 8
-text = "ENTER = START"
+text = "ENTER : START"
 horizontal_alignment = 1

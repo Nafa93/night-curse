@@ -1,8 +1,8 @@
 extends Node
 
-const _ATTACK_SFX := preload("res://assets/sounds/attack.wav")
-const _PICKUP_SFX := preload("res://assets/sounds/pickup.wav")
-const _IMPACT_SFX := preload("res://assets/sounds/enemy-impact.wav")
+const _ATTACK_SFX := preload("res://assets/Sounds/attack.wav")
+const _PICKUP_SFX := preload("res://assets/Sounds/pickup.wav")
+const _IMPACT_SFX := preload("res://assets/Sounds/enemy-impact.wav")
 
 var _attack_player: AudioStreamPlayer
 var _pickup_player: AudioStreamPlayer

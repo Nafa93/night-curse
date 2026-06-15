@@ -11,7 +11,7 @@ func setup(points: int) -> void:
 	_points = max(points, 0)
 
 func _ready() -> void:
-	label.text = "+%d" % _points
+	label.text = "%d" % _points
 
 	var tween := create_tween()
 	tween.set_parallel(true)
