@@ -73,6 +73,7 @@ func _connect_section_doors() -> void:
 		var door := node as SectionDoor
 		section_doors.append(door)
 		door.locked.connect(_on_section_door_locked.bind(door))
+		door.unlock_failed.connect(_on_section_door_unlock_failed)
 
 func _update_camera_limits(world: TileMapLayer, reset_smoothing := true) -> void:
 	var world_bounds: Rect2 = _get_tilemap_bounds(world)
@@ -215,6 +216,9 @@ func _on_section_door_locked(door: SectionDoor) -> void:
 	camera.position_smoothing_speed = base_camera_smoothing_speed
 	player.set_physics_process(true)
 	is_world_transitioning = false
+
+func _on_section_door_unlock_failed() -> void:
+	hud.shake_keys()
 
 func _complete_room_transition(door: SectionDoor) -> void:
 	var crossing_direction := door.get_crossing_direction()

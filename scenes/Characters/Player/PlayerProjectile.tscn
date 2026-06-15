@@ -1,7 +1,7 @@
-[gd_scene format=3]
+[gd_scene load_steps=7 format=3]
 
-[ext_resource type="Script" path="res://scripts/Characters/Enemies/enemy_projectile.gd" id="1_script"]
-[ext_resource type="Texture2D" path="res://assets/enemy-projectile-Sheet.png" id="2_texture"]
+[ext_resource type="Script" path="res://scripts/Characters/Player/player_projectile.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/main-char-projectile-Sheet.png" id="2_texture"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_projectile_1"]
 atlas = ExtResource("2_texture")
@@ -11,6 +11,10 @@ region = Rect2(0, 0, 24, 24)
 atlas = ExtResource("2_texture")
 region = Rect2(24, 0, 24, 24)
 
+[sub_resource type="AtlasTexture" id="AtlasTexture_projectile_3"]
+atlas = ExtResource("2_texture")
+region = Rect2(48, 0, 24, 24)
+
 [sub_resource type="SpriteFrames" id="SpriteFrames_projectile"]
 animations = [{
 "frames": [{
@@ -19,27 +23,30 @@ animations = [{
 }, {
 "duration": 1.0,
 "texture": SubResource("AtlasTexture_projectile_2")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_projectile_3")
 }],
 "loop": true,
-"name": &"fly",
-"speed": 8.0
+"name": &"travel",
+"speed": 12.0
 }]
 
-[sub_resource type="CircleShape2D" id="CircleShape2D_projectile"]
-radius = 5.0
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_projectile"]
+size = Vector2(18, 10)
 
-[node name="EnemyProjectile" type="Area2D" groups=["projectile"]]
-collision_layer = 16
-collision_mask = 7
+[node name="PlayerProjectile" type="Area2D" groups=["projectile"]]
+collision_layer = 4
+collision_mask = 25
 script = ExtResource("1_script")
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
 texture_filter = 1
 sprite_frames = SubResource("SpriteFrames_projectile")
-animation = &"fly"
+animation = &"travel"
 
 [node name="CollisionShape2D" type="CollisionShape2D" parent="."]
-shape = SubResource("CircleShape2D_projectile")
+shape = SubResource("RectangleShape2D_projectile")
 
 [node name="VisibleOnScreenNotifier2D" type="VisibleOnScreenNotifier2D" parent="."]
-rect = Rect2(-6, -6, 12, 12)
+rect = Rect2(-12, -12, 24, 24)

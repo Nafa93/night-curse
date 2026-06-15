@@ -4,6 +4,7 @@ extends StaticBody2D
 signal opened
 signal closed
 signal locked
+signal unlock_failed
 
 enum DoorState {
 	CLOSED,
@@ -16,6 +17,8 @@ enum DoorState {
 @export var opens_from_left := true
 @export var locks_after_crossing := true
 @export var starts_open := false
+@export var lockable := false
+@export_range(0, 2, 1) var required_keys := 1
 @export var close_distance := 12.0
 @export var creates_room_boundary := true
 @export var checkpoint_distance := 32.0
@@ -26,6 +29,7 @@ enum DoorState {
 
 var _state := DoorState.CLOSED
 var _tracked_player: CharacterBody2D
+var _key_lock_opened := false
 
 func _ready() -> void:
 	detection_area.body_entered.connect(_on_detection_body_entered)
@@ -33,6 +37,7 @@ func _ready() -> void:
 
 	if starts_open:
 		_state = DoorState.OPEN
+		_key_lock_opened = true
 		door_sprite.play(&"open")
 		_set_collision_enabled(false)
 	else:
@@ -40,7 +45,15 @@ func _ready() -> void:
 		_set_collision_enabled(true)
 
 func _physics_process(_delta: float) -> void:
-	if _state != DoorState.OPEN or not is_instance_valid(_tracked_player):
+	if not is_instance_valid(_tracked_player):
+		return
+
+	if _state == DoorState.CLOSED and lockable and not _key_lock_opened:
+		if Input.is_action_just_pressed("interact"):
+			_try_unlock()
+		return
+
+	if _state != DoorState.OPEN:
 		return
 
 	var crossing_direction := get_crossing_direction()
@@ -88,6 +101,7 @@ func close_door(lock_after_closing := false) -> void:
 func reset_door() -> void:
 	_state = DoorState.CLOSED
 	_tracked_player = null
+	_key_lock_opened = false
 	door_sprite.play(&"closed")
 	_set_collision_enabled(true)
 
@@ -125,16 +139,36 @@ func _on_detection_body_entered(body: Node2D) -> void:
 		return
 
 	_tracked_player = body as CharacterBody2D
-	open_door()
+	if not lockable or _key_lock_opened:
+		open_door()
 
 func _on_detection_body_exited(body: Node2D) -> void:
-	if body != _tracked_player or _state != DoorState.OPEN:
+	if body != _tracked_player:
+		return
+
+	if _state == DoorState.CLOSED:
+		_tracked_player = null
+		return
+
+	if _state != DoorState.OPEN:
 		return
 
 	var crossing_direction := get_crossing_direction()
 	var exit_distance := (body.global_position.x - global_position.x) * crossing_direction
 	if exit_distance < 0.0:
 		close_door(false)
+
+func _try_unlock() -> void:
+	if not is_instance_valid(_tracked_player):
+		return
+
+	var keys_needed := maxi(required_keys, 0)
+	if not _tracked_player.has_method("use_keys") or not _tracked_player.use_keys(keys_needed):
+		unlock_failed.emit()
+		return
+
+	_key_lock_opened = true
+	open_door()
 
 func _is_player(body: Node2D) -> bool:
 	return body is CharacterBody2D and body.has_method("heal")

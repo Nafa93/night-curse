@@ -8,6 +8,7 @@ const CANDY_PICKUP := preload("res://scenes/Items/CandyPickup.tscn")
 @export var gravity := 980.0
 @export var health := 1
 @export var score_value := 100
+@export var hit_flash_time := 0.12
 @export_range(0.0, 1.0, 0.01) var heart_drop_chance := 0.15
 @export_range(0.0, 1.0, 0.01) var candy_drop_chance := 0.1
 @export var active_in_corporeal_world := true
@@ -24,6 +25,7 @@ var direction := 1.0
 var is_active := false
 var is_world_enabled := true
 var is_near_screen := false
+var is_taking_hit := false
 var base_collision_layer := 8
 
 func _ready() -> void:
@@ -65,6 +67,9 @@ func refresh_activation_state() -> void:
 		velocity = Vector2.ZERO
 
 func take_hit() -> void:
+	if is_taking_hit or health <= 0:
+		return
+
 	health -= 1
 	if health <= 0:
 		var level := get_tree().current_scene
@@ -75,6 +80,16 @@ func take_hit() -> void:
 		_try_drop_heart()
 		_try_drop_candy()
 		queue_free()
+		return
+
+	_flash_hit()
+
+func _flash_hit() -> void:
+	is_taking_hit = true
+	visual.modulate = Color(1.0, 1.0, 1.0, 0.25)
+	await get_tree().create_timer(hit_flash_time).timeout
+	visual.modulate = Color.WHITE
+	is_taking_hit = false
 
 func _try_drop_heart() -> void:
 	if randf() > heart_drop_chance:

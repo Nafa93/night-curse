@@ -1,10 +1,9 @@
-[gd_scene load_steps=9 format=3]
+[gd_scene load_steps=12 format=3]
 
 [ext_resource type="Script" path="res://scripts/Levels/hud.gd" id="1_script"]
 [ext_resource type="FontFile" path="res://assets/fonts/nintendo-nes-font.ttf" id="1_font"]
 [ext_resource type="Texture2D" path="res://assets/Items/life-hearts-Sheet.png" id="2_life_sheet"]
-[ext_resource type="Texture2D" path="res://assets/Items/key_icon_empty_16x16.png" id="4_key_empty"]
-[ext_resource type="Texture2D" path="res://assets/Items/key_icon_16x16.png" id="5_key_full"]
+[ext_resource type="Texture2D" path="res://assets/Items/keys-Sheet.png" id="4_key_sheet"]
 
 [sub_resource type="AtlasTexture" id="AtlasTexture_life_empty"]
 atlas = ExtResource("2_life_sheet")
@@ -13,6 +12,22 @@ region = Rect2(16, 0, 16, 16)
 [sub_resource type="AtlasTexture" id="AtlasTexture_life_full"]
 atlas = ExtResource("2_life_sheet")
 region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_key_red"]
+atlas = ExtResource("4_key_sheet")
+region = Rect2(0, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_key_red_empty"]
+atlas = ExtResource("4_key_sheet")
+region = Rect2(16, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_key_gold"]
+atlas = ExtResource("4_key_sheet")
+region = Rect2(32, 0, 16, 16)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_key_gold_empty"]
+atlas = ExtResource("4_key_sheet")
+region = Rect2(48, 0, 16, 16)
 
 [sub_resource type="StyleBoxFlat" id="StyleBoxFlat_hud_box"]
 bg_color = Color(0, 0, 0, 1)
@@ -199,7 +214,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_key_empty")
+texture = SubResource("AtlasTexture_key_red_empty")
 expand_mode = 1
 
 [node name="Full" type="TextureRect" parent="Panel/KeysBox/Key1"]
@@ -209,7 +224,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("5_key_full")
+texture = SubResource("AtlasTexture_key_red")
 expand_mode = 1
 
 [node name="Key2" type="Control" parent="Panel/KeysBox"]
@@ -226,7 +241,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("4_key_empty")
+texture = SubResource("AtlasTexture_key_gold_empty")
 expand_mode = 1
 
 [node name="Full" type="TextureRect" parent="Panel/KeysBox/Key2"]
@@ -236,7 +251,7 @@ anchor_right = 1.0
 anchor_bottom = 1.0
 grow_horizontal = 2
 grow_vertical = 2
-texture = ExtResource("5_key_full")
+texture = SubResource("AtlasTexture_key_gold")
 expand_mode = 1
 
 [node name="MessageLabel" type="Label" parent="Panel"]

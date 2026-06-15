@@ -10,6 +10,23 @@ size = Vector2(8, 28)
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_attack"]
 size = Vector2(21, 15)
 
+[sub_resource type="Shader" id="Shader_charge_flash"]
+code = "shader_type canvas_item;
+
+uniform float white_flash : hint_range(0.0, 1.0) = 0.0;
+
+void fragment() {
+	vec4 base_color = COLOR;
+	COLOR = vec4(
+		mix(base_color.rgb, vec3(1.0), white_flash),
+		base_color.a
+	);
+}"
+
+[sub_resource type="ShaderMaterial" id="ShaderMaterial_charge_flash"]
+resource_local_to_scene = true
+shader = SubResource("Shader_charge_flash")
+
 [sub_resource type="AtlasTexture" id="AtlasTexture_melee_1"]
 atlas = ExtResource("4_melee")
 region = Rect2(0, 0, 24, 24)
@@ -184,5 +201,6 @@ position_smoothing_enabled = true
 position_smoothing_speed = 8.0
 
 [node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="." unique_id=2062478235]
+material = SubResource("ShaderMaterial_charge_flash")
 sprite_frames = SubResource("SpriteFrames_6eyey")
 animation = &"Idle"

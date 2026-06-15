@@ -1,4 +1,4 @@
-extends Area2D
+extends "res://scripts/Items/gravity_pickup.gd"
 
 @export var heal_amount := 1
 @export var full_heal := false

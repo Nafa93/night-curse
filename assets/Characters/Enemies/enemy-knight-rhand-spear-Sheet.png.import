@@ -2,16 +2,16 @@
 
 importer="texture"
 type="CompressedTexture2D"
-uid="uid://ufv86pebbp07"
-path="res://.godot/imported/cookie_16x16.png-10805229a6096686d847d732663c4f8d.ctex"
+uid="uid://cd11k14lq3r2y"
+path="res://.godot/imported/enemy-knight-rhand-spear-Sheet.png-b5adf77cbb1b7098f3c29dd60ee64503.ctex"
 metadata={
 "vram_texture": false
 }
 
 [deps]
 
-source_file="res://assets/Items/cookie_16x16.png"
-dest_files=["res://.godot/imported/cookie_16x16.png-10805229a6096686d847d732663c4f8d.ctex"]
+source_file="res://assets/Characters/Enemies/enemy-knight-rhand-spear-Sheet.png"
+dest_files=["res://.godot/imported/enemy-knight-rhand-spear-Sheet.png-b5adf77cbb1b7098f3c29dd60ee64503.ctex"]
 
 [params]
 

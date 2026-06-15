@@ -1,0 +1,8 @@
+[gd_scene format=3 uid="uid://ieha0ab85dxf"]
+
+[ext_resource type="PackedScene" path="res://scenes/Characters/Enemies/KnightEnemy.tscn" id="1_knight"]
+
+[node name="SwordKnightEnemy" unique_id=770443302 instance=ExtResource("1_knight")]
+
+[node name="CollisionShape2D" parent="." index="2"]
+position = Vector2(0, 1)

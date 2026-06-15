@@ -1,0 +1,77 @@
+[gd_scene load_steps=12 format=3]
+
+[ext_resource type="Script" path="res://scripts/Characters/Enemies/ghost_boss.gd" id="1_script"]
+[ext_resource type="Texture2D" path="res://assets/Characters/Enemies/enemy-giant-ghost-Sheet.png" id="2_texture"]
+[ext_resource type="PackedScene" path="res://scenes/Characters/Enemies/LeftHandEnemy.tscn" id="3_left"]
+[ext_resource type="PackedScene" path="res://scenes/Characters/Enemies/RightHandMelee.tscn" id="4_right"]
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_1"]
+atlas = ExtResource("2_texture")
+region = Rect2(0, 0, 48, 48)
+
+[sub_resource type="AtlasTexture" id="AtlasTexture_idle_2"]
+atlas = ExtResource("2_texture")
+region = Rect2(48, 0, 48, 48)
+
+[sub_resource type="SpriteFrames" id="SpriteFrames_body"]
+animations = [{
+"frames": [{
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_1")
+}, {
+"duration": 1.0,
+"texture": SubResource("AtlasTexture_idle_2")
+}],
+"loop": true,
+"name": &"idle",
+"speed": 4.0
+}]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_body"]
+size = Vector2(40, 44)
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_damage"]
+size = Vector2(40, 44)
+
+[node name="GhostBoss" type="CharacterBody2D"]
+collision_layer = 8
+script = ExtResource("1_script")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="."]
+texture_filter = 1
+sprite_frames = SubResource("SpriteFrames_body")
+animation = &"idle"
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("RectangleShape2D_body")
+
+[node name="DamageArea" type="Area2D" parent="."]
+collision_layer = 0
+collision_mask = 2
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="DamageArea"]
+shape = SubResource("RectangleShape2D_damage")
+
+[node name="ActivationNotifier" type="VisibleOnScreenNotifier2D" parent="."]
+rect = Rect2(-80, -40, 160, 80)
+
+[node name="LeftHandEnemy" parent="." instance=ExtResource("3_left")]
+position = Vector2(-52, 0)
+autonomous = false
+aim_at_player_y = true
+redirect_damage_to_parent = true
+always_track_player = true
+manual_shoot_only = true
+active_in_corporeal_world = false
+active_in_spectral_world = true
+
+[node name="RightHandMelee" parent="." instance=ExtResource("4_right")]
+position = Vector2(52, 0)
+autonomous = false
+return_to_home = true
+home_return_speed = 150.0
+aim_at_target = true
+redirect_damage_to_parent = true
+gravity = 0.0
+active_in_corporeal_world = false
+active_in_spectral_world = true
