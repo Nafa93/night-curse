@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 const SMALL_HEART_PICKUP := preload("res://scenes/Items/SmallHeartPickup.tscn")
 const CANDY_PICKUP := preload("res://scenes/Items/CandyPickup.tscn")
+const KEY_ITEM := preload("res://scenes/Items/KeyItem.tscn")
 
 @export var projectile_scene: PackedScene
 @export var speed := 28.0
@@ -9,9 +10,11 @@ const CANDY_PICKUP := preload("res://scenes/Items/CandyPickup.tscn")
 @export var starts_moving_right := false
 @export var gravity := 980.0
 @export var health := 3
-@export var score_value := 300
+@export var score_value := 2000
 @export var shoot_cooldown := 1.5
-@export_range(0.0, 1.0, 0.01) var heart_drop_chance := 0.2
+@export var high_shot_height := -14.0
+@export var middle_shot_height := -5.0
+@export var low_shot_height := 7.0
 @export_range(0.0, 1.0, 0.01) var candy_drop_chance := 0.15
 @export var active_in_corporeal_world := true
 @export var active_in_spectral_world := false
@@ -34,6 +37,7 @@ var shoot_time_remaining := 0.0
 var tracked_target: CharacterBody2D
 var player_target: CharacterBody2D
 var base_collision_layer := 8
+var last_shot_height_index := -1
 
 func _ready() -> void:
 	start_x = global_position.x
@@ -109,7 +113,7 @@ func take_hit() -> void:
 		level.award_points(score_value, global_position)
 	elif level.has_method("add_points"):
 		level.add_points(score_value)
-	_try_drop_heart()
+	_drop_defeat_rewards()
 	_try_drop_candy()
 	queue_free()
 
@@ -118,10 +122,26 @@ func _shoot() -> void:
 		return
 
 	shoot_time_remaining = shoot_cooldown
+	muzzle.position.y = _get_random_shot_height()
 	var projectile := projectile_scene.instantiate()
 	get_parent().add_child(projectile)
 	projectile.global_position = muzzle.global_position
 	projectile.setup(facing_direction)
+
+func _get_random_shot_height() -> float:
+	var available_indices := [0, 1, 2]
+	if last_shot_height_index >= 0:
+		available_indices.erase(last_shot_height_index)
+
+	var selected_index: int = available_indices.pick_random()
+	last_shot_height_index = selected_index
+	match selected_index:
+		0:
+			return high_shot_height
+		1:
+			return middle_shot_height
+		_:
+			return low_shot_height
 
 func _face_player() -> void:
 	var target_direction := signf(player_target.global_position.x - global_position.x)
@@ -152,14 +172,25 @@ func _update_checks() -> void:
 	floor_check.position.x = 17.0 * direction
 	wall_check.target_position = Vector2(24.0 * direction, 0.0)
 
-func _try_drop_heart() -> void:
-	if randf() > heart_drop_chance:
+func _drop_defeat_rewards() -> void:
+	var level := get_tree().current_scene as Node2D
+	if level == null:
 		return
 
-	var level := get_tree().current_scene as Node2D
-	var pickup: Area2D = SMALL_HEART_PICKUP.instantiate()
-	pickup.position = level.to_local(global_position)
-	level.call_deferred("add_child", pickup)
+	var heart_offsets := [
+		Vector2(-16.0, -4.0),
+		Vector2(0.0, -12.0),
+		Vector2(16.0, -4.0),
+	]
+	for offset in heart_offsets:
+		var heart: Area2D = SMALL_HEART_PICKUP.instantiate()
+		heart.position = level.to_local(global_position + offset)
+		level.call_deferred("add_child", heart)
+
+	var gold_key: Area2D = KEY_ITEM.instantiate()
+	gold_key.set("key_variant", 1)
+	gold_key.position = level.to_local(global_position + Vector2(0.0, -30.0))
+	level.call_deferred("add_child", gold_key)
 
 func _try_drop_candy() -> void:
 	if randf() > candy_drop_chance:

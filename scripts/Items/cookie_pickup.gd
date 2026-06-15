@@ -1,4 +1,4 @@
-extends Area2D
+extends "res://scripts/Items/gravity_pickup.gd"
 
 @export var collectible_id := ""
 @export var score_value := 500

@@ -72,14 +72,25 @@ offset_bottom = 136.0
 theme_override_colors/font_color = Color(0.94, 0.94, 0.84, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 8
-text = "Z               ATTACK"
+text = "Z TAP           ATTACK"
+
+[node name="ChargeAttack" type="Label" parent="."]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 148.0
+offset_right = 232.0
+offset_bottom = 160.0
+theme_override_colors/font_color = Color(0.94, 0.94, 0.84, 1)
+theme_override_fonts/font = ExtResource("2_font")
+theme_override_font_sizes/font_size = 8
+text = "HOLD Z      CHARGED SHOT"
 
 [node name="Jump" type="Label" parent="."]
 layout_mode = 0
 offset_left = 36.0
-offset_top = 148.0
+offset_top = 172.0
 offset_right = 220.0
-offset_bottom = 160.0
+offset_bottom = 184.0
 theme_override_colors/font_color = Color(0.94, 0.94, 0.84, 1)
 theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 8
@@ -108,4 +119,3 @@ theme_override_fonts/font = ExtResource("2_font")
 theme_override_font_sizes/font_size = 8
 text = "ENTER = START"
 horizontal_alignment = 1
-

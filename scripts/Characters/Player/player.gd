@@ -4,6 +4,10 @@ signal lives_changed(lives: int, max_lives: int)
 signal keys_changed(key_count: int, max_keys: int)
 signal game_over
 
+const PLAYER_PROJECTILE := preload(
+	"res://scenes/Characters/Player/PlayerProjectile.tscn"
+)
+
 @export var speed := 90.0
 @export var jump_velocity := -270.0
 @export var gravity := 900.0
@@ -20,6 +24,9 @@ signal game_over
 @export var fall_limit_y := 420.0
 @export var attack_time := 0.18
 @export var attack_cooldown := 0.35
+@export var charged_attack_time := 0.65
+@export var charged_flash_interval := 0.08
+@export var projectile_spawn_offset := Vector2(18.0, -2.0)
 @export var knockback_horizontal := 150.0
 @export var knockback_vertical := -180.0
 @export var hit_feedback_time := 0.3
@@ -29,6 +36,7 @@ signal game_over
 @export var crouching_collision_position := Vector2(-1.0, 3.0)
 
 @onready var sprite: AnimatedSprite2D = $AnimatedSprite2D
+@onready var charge_material: ShaderMaterial = sprite.material as ShaderMaterial
 @onready var body_collision: CollisionShape2D = $CollisionShape2D
 @onready var attack_area: Area2D = $AttackArea
 @onready var attack_shape: CollisionShape2D = $AttackArea/CollisionShape2D
@@ -49,6 +57,8 @@ var has_key: bool:
 var facing_direction := 1.0
 var can_attack := true
 var is_attacking := false
+var is_charging_attack := false
+var attack_charge_time := 0.0
 var is_crouching := false
 var is_taking_damage := false
 var jump_buffer_remaining := 0.0
@@ -74,6 +84,7 @@ func set_day_state(is_day: bool) -> void:
 
 func prepare_for_world_transition() -> void:
 	velocity = Vector2.ZERO
+	_cancel_attack_charge()
 	_set_crouching(false, true)
 	_play_animation(&"Idle")
 
@@ -88,6 +99,7 @@ func restore_from_checkpoint(checkpoint_position: Vector2, restored_key_count: i
 	velocity = Vector2.ZERO
 	is_respawning = false
 	is_taking_damage = false
+	_cancel_attack_charge()
 	_set_crouching(false, true)
 	sprite.visible = true
 	_reset_movement_assists()
@@ -107,6 +119,7 @@ func _physics_process(delta: float) -> void:
 		velocity.y += gravity * delta
 
 	if is_taking_damage:
+		_cancel_attack_charge()
 		move_and_slide()
 		_update_animation()
 		return
@@ -154,7 +167,34 @@ func _physics_process(delta: float) -> void:
 	if global_position.y > fall_limit_y:
 		_respawn_after_fall()
 
-	if Input.is_action_just_pressed("attack"):
+	_update_attack_input(delta)
+
+func _update_attack_input(delta: float) -> void:
+	if Input.is_action_just_pressed("attack") and can_attack:
+		is_charging_attack = true
+		attack_charge_time = 0.0
+
+	if not is_charging_attack:
+		return
+
+	if Input.is_action_pressed("attack"):
+		attack_charge_time += delta
+		if attack_charge_time >= charged_attack_time:
+			var flash_interval := maxf(charged_flash_interval, 0.01)
+			var flash_phase := fmod(
+				attack_charge_time - charged_attack_time,
+				flash_interval * 2.0
+			)
+			_set_charge_flash(1.0 if flash_phase < flash_interval else 0.0)
+
+	if not Input.is_action_just_released("attack"):
+		return
+
+	var charged := attack_charge_time >= charged_attack_time
+	_cancel_attack_charge()
+	if charged:
+		_start_projectile_attack()
+	else:
 		_start_attack()
 
 func _update_input_buffers(delta: float, input_direction: float) -> void:
@@ -333,6 +373,7 @@ func take_damage(source_position: Vector2 = Vector2.ZERO) -> void:
 	if is_respawning or is_taking_damage:
 		return
 
+	_cancel_attack_charge()
 	is_taking_damage = true
 	var knockback_direction: float = sign(global_position.x - source_position.x)
 	if knockback_direction == 0.0:
@@ -364,6 +405,39 @@ func _start_attack() -> void:
 
 	await get_tree().create_timer(attack_cooldown).timeout
 	can_attack = true
+
+func _start_projectile_attack() -> void:
+	if not can_attack:
+		return
+
+	can_attack = false
+	is_attacking = true
+	_play_animation(&"CrouchAttack" if is_crouching else &"Attack")
+	_spawn_player_projectile()
+	await get_tree().create_timer(attack_time).timeout
+	is_attacking = false
+
+	await get_tree().create_timer(attack_cooldown).timeout
+	can_attack = true
+
+func _spawn_player_projectile() -> void:
+	var projectile := PLAYER_PROJECTILE.instantiate()
+	var level := get_tree().current_scene
+	level.add_child(projectile)
+	projectile.global_position = global_position + Vector2(
+		projectile_spawn_offset.x * facing_direction,
+		projectile_spawn_offset.y + (7.0 if is_crouching else 0.0)
+	)
+	projectile.setup(facing_direction)
+
+func _cancel_attack_charge() -> void:
+	is_charging_attack = false
+	attack_charge_time = 0.0
+	_set_charge_flash(0.0)
+
+func _set_charge_flash(amount: float) -> void:
+	if charge_material != null:
+		charge_material.set_shader_parameter("white_flash", amount)
 
 func _start_melee_attack() -> void:
 	attack_area.position = Vector2(

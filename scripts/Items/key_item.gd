@@ -1,4 +1,4 @@
-extends Area2D
+extends "res://scripts/Items/gravity_pickup.gd"
 
 enum KeyVariant {
 	RED,
