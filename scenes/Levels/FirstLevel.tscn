@@ -6,6 +6,7 @@
 [ext_resource type="PackedScene" uid="uid://c22tg6wb567cx" path="res://scenes/Characters/Enemies/FlyingEnemy.tscn" id="6_lxoku"]
 [ext_resource type="PackedScene" uid="uid://cmbylwumw8ula" path="res://scenes/Items/WorldToggle.tscn" id="6_p2c6n"]
 [ext_resource type="PackedScene" path="res://scenes/Levels/GameOverScreen.tscn" id="8_game_over"]
+[ext_resource type="PackedScene" path="res://scenes/Levels/TheEndScreen.tscn" id="16_the_end"]
 [ext_resource type="PackedScene" uid="uid://dps4tl3yk2a8n" path="res://scenes/Characters/Enemies/GroundEnemy.tscn" id="8_lxoku"]
 [ext_resource type="PackedScene" path="res://scenes/Levels/HUD.tscn" id="9_hud"]
 [ext_resource type="PackedScene" path="res://scenes/Characters/Enemies/GhostBoss.tscn" id="9_vu6kc"]
@@ -27,6 +28,8 @@ position = Vector2(34, 176)
 [node name="HUD" parent="." unique_id=1609355154 instance=ExtResource("9_hud")]
 
 [node name="GameOverScreen" parent="." unique_id=1060313596 instance=ExtResource("8_game_over")]
+
+[node name="TheEndScreen" parent="." instance=ExtResource("16_the_end")]
 
 [node name="WorldTransition" parent="." unique_id=1081591791 instance=ExtResource("10_world_transition")]
 visible = false

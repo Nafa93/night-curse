@@ -16,6 +16,7 @@ const FLOATING_SCORE_SCENE := preload("res://scenes/Levels/FloatingScore.tscn")
 @onready var camera: Camera2D = $Player/Camera2D
 @onready var hud: GameHUD = $HUD
 @onready var game_over_screen: GameOverScreen = $GameOverScreen
+@onready var the_end_screen: TheEndScreen = $TheEndScreen
 @onready var regular_world: WorldContainer = $Worlds/Regular
 @onready var otherside_world: WorldContainer = $Worlds/Otherside
 @onready var regular_tile_map: TileMapLayer = $Worlds/Regular/TileMap
@@ -37,6 +38,7 @@ var last_camera_bounds_cell_x := 2147483647
 
 func _ready() -> void:
 	_connect_section_doors()
+	_connect_final_boss()
 	_configure_camera()
 	player.lives_changed.connect(_on_player_lives_changed)
 	player.keys_changed.connect(_on_player_keys_changed)
@@ -75,6 +77,15 @@ func _connect_section_doors() -> void:
 		section_doors.append(door)
 		door.locked.connect(_on_section_door_locked.bind(door))
 		door.unlock_failed.connect(_on_section_door_unlock_failed)
+
+func _connect_final_boss() -> void:
+	for node in get_tree().get_nodes_in_group("final_boss"):
+		if node.has_signal("defeated"):
+			node.defeated.connect(_on_final_boss_defeated)
+
+func _on_final_boss_defeated() -> void:
+	player.set_physics_process(false)
+	the_end_screen.show_screen()
 
 func _update_camera_limits(world: TileMapLayer, reset_smoothing := true) -> void:
 	var world_bounds: Rect2 = _get_tilemap_bounds(world)

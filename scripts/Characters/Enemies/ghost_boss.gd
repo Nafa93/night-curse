@@ -28,6 +28,7 @@ var base_collision_layer := 8
 func _ready() -> void:
 	base_collision_layer = collision_layer
 	add_to_group("day_night_reactive")
+	add_to_group("final_boss")
 	damage_area.body_entered.connect(_on_damage_area_body_entered)
 	activation_notifier.screen_entered.connect(_on_screen_entered)
 	activation_notifier.screen_exited.connect(_on_screen_exited)

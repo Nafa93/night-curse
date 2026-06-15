@@ -1,0 +1,29 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="FontFile" path="res://assets/fonts/nintendo-nes-font.ttf" id="1_font"]
+[ext_resource type="Script" path="res://scripts/Levels/the_end_screen.gd" id="2_script"]
+
+[node name="TheEndScreen" type="CanvasLayer"]
+process_mode = 3
+layer = 21
+visible = false
+script = ExtResource("2_script")
+
+[node name="Background" type="ColorRect" parent="."]
+anchors_preset = 15
+anchor_right = 1.0
+anchor_bottom = 1.0
+grow_horizontal = 2
+grow_vertical = 2
+color = Color(0, 0, 0, 1)
+
+[node name="TheEndLabel" type="Label" parent="."]
+offset_left = 8.0
+offset_top = 88.0
+offset_right = 248.0
+offset_bottom = 124.0
+theme_override_colors/font_color = Color(0.93, 0.9, 0.72, 1)
+theme_override_fonts/font = ExtResource("1_font")
+theme_override_font_sizes/font_size = 24
+text = "THE END?"
+horizontal_alignment = 1

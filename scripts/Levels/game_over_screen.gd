@@ -4,6 +4,8 @@ extends CanvasLayer
 signal continue_selected
 signal quit_selected
 
+@export var fade_in_time := 0.6
+
 @onready var options: Array[Label] = [
 	$Menu/YesLabel,
 	$Menu/NoLabel,
@@ -19,7 +21,14 @@ func _ready() -> void:
 func show_menu() -> void:
 	selected_option = 0
 	_update_selection()
+	for child in get_children():
+		if child is CanvasItem:
+			(child as CanvasItem).modulate.a = 0.0
 	visible = true
+	var tween := create_tween().set_parallel(true)
+	for child in get_children():
+		if child is CanvasItem:
+			tween.tween_property(child, "modulate:a", 1.0, fade_in_time)
 
 
 func _unhandled_input(event: InputEvent) -> void:
