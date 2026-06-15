@@ -18,7 +18,10 @@ enum WeaponVariant {
 @export var hit_flash_time := 0.12
 @export var attack_cooldown := 1.1
 @export var attack_vertical_tolerance := 32.0
-@export var sword_visual_scale := Vector2(2.0, 2.0)
+@export var sword_visual_scale := Vector2(1.0, 1.0)
+@export var sword_visual_offset := 6.0
+@export var sword_visual_y_offset := -4.0
+@export var sword_bob_amplitude := 0.25
 @export var spear_visual_scale := Vector2.ONE
 @export var spear_visual_offset := 12.0
 @export var sword_attack_size := Vector2(38.0, 20.0)
@@ -73,7 +76,6 @@ func _ready() -> void:
 	activation_notifier.screen_exited.connect(_on_screen_exited)
 	add_to_group("day_night_reactive")
 	_set_attack_enabled(false)
-	attack_visual.visible = false
 	visual.play(&"walk")
 	_configure_weapon()
 	_update_direction()
@@ -91,7 +93,10 @@ func _physics_process(delta: float) -> void:
 	if not is_attacking and not is_taking_hit and _can_attack_target():
 		_start_attack()
 	if is_telegraphing:
-		_process_spear_telegraph(delta)
+		_process_telegraph(delta)
+
+	if weapon_variant == WeaponVariant.SWORD and not is_attacking and not is_telegraphing:
+		attack_visual.rotation = sword_bob_amplitude if visual.frame == 0 else -sword_bob_amplitude
 
 	velocity.x = 0.0 if is_taking_hit or is_attacking else direction * speed
 	move_and_slide()
@@ -159,20 +164,18 @@ func _start_attack() -> void:
 	hit_target_this_attack = false
 	velocity.x = 0.0
 	visual.pause()
-	if weapon_variant == WeaponVariant.SPEAR:
-		is_telegraphing = true
-		telegraph_elapsed = 0.0
-		attack_visual.pause()
-		_set_attack_enabled(false)
-		return
+	attack_visual.rotation = 0.0
+	is_telegraphing = true
+	telegraph_elapsed = 0.0
+	attack_visual.pause()
+	_set_attack_enabled(false)
 
-	_begin_attack_animation()
-
-func _process_spear_telegraph(delta: float) -> void:
+func _process_telegraph(delta: float) -> void:
 	telegraph_elapsed += delta
 	var shake_offset := sin(telegraph_elapsed * spear_shake_speed) * spear_shake_distance
 	visual.position.x = shake_offset
-	attack_visual.position.x = spear_visual_offset * direction + shake_offset
+	var base_x := spear_visual_offset if weapon_variant == WeaponVariant.SPEAR else sword_visual_offset
+	attack_visual.position.x = base_x * direction + shake_offset
 
 	if telegraph_elapsed < spear_telegraph_time:
 		return
@@ -222,20 +225,20 @@ func _configure_weapon() -> void:
 	if weapon_variant == WeaponVariant.SPEAR:
 		attack_visual.scale = spear_visual_scale
 		rectangle.size = spear_attack_size
-		_show_patrol_weapon()
 	else:
-		attack_visual.animation = &"sword_attack"
 		attack_visual.scale = sword_visual_scale
 		rectangle.size = sword_attack_size
-		attack_visual.visible = false
+	_show_patrol_weapon()
 
 func _show_patrol_weapon() -> void:
 	if weapon_variant == WeaponVariant.SPEAR:
 		attack_visual.visible = true
 		attack_visual.play(&"spear_patrol")
 	else:
-		attack_visual.stop()
-		attack_visual.visible = false
+		attack_visual.visible = true
+		attack_visual.play(&"sword_attack")
+		attack_visual.frame = 0
+		attack_visual.pause()
 
 func _get_attack_animation() -> StringName:
 	return &"spear_attack" if weapon_variant == WeaponVariant.SPEAR else &"sword_attack"
@@ -255,8 +258,9 @@ func _update_direction() -> void:
 	attack_visual.position.x = (
 		spear_visual_offset * direction
 		if weapon_variant == WeaponVariant.SPEAR
-		else 0.0
+		else sword_visual_offset * direction
 	)
+	attack_visual.position.y = 0.0 if weapon_variant == WeaponVariant.SPEAR else sword_visual_y_offset
 	attack_area.position.x = _get_attack_center() * direction
 
 func _update_checks() -> void:
