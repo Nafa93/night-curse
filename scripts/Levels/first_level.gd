@@ -51,6 +51,7 @@ func _ready() -> void:
 	_on_player_keys_changed(player.key_count, player.max_keys)
 	_update_points_label()
 	_apply_world_state()
+	SoundManager.play_music()
 
 func _process(_delta: float) -> void:
 	if is_game_over or is_world_transitioning:
@@ -339,6 +340,7 @@ func _on_continue_selected() -> void:
 
 func _on_quit_selected() -> void:
 	get_tree().paused = false
+	SoundManager.stop_music()
 	CheckpointManager.clear()
 	get_tree().change_scene_to_file("res://scenes/Levels/MainMenu.tscn")
 
