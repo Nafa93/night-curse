@@ -136,6 +136,8 @@ func _on_detection_body_entered(body: Node2D) -> void:
 	_tracked_player = body as CharacterBody2D
 	if not lockable or _key_lock_opened:
 		open_door()
+	else:
+		_try_unlock()
 
 func _on_detection_body_exited(body: Node2D) -> void:
 	if body != _tracked_player:
