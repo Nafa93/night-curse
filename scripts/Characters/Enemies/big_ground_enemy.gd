@@ -11,6 +11,7 @@ const KEY_ITEM := preload("res://scenes/Items/KeyItem.tscn")
 @export var gravity := 980.0
 @export var health := 5
 @export var score_value := 2000
+@export var hit_flash_time := 0.12
 @export var shoot_cooldown := 1.5
 @export var high_shot_height := -14.0
 @export var middle_shot_height := -5.0
@@ -33,6 +34,7 @@ var facing_direction := -1.0
 var is_active := false
 var is_world_enabled := true
 var is_near_screen := false
+var is_taking_hit := false
 var shoot_time_remaining := 0.0
 var tracked_target: CharacterBody2D
 var player_target: CharacterBody2D
@@ -104,18 +106,29 @@ func refresh_activation_state() -> void:
 		tracked_target = null
 
 func take_hit() -> void:
-	health -= 1
-	if health > 0:
+	if is_taking_hit or health <= 0:
 		return
 
-	var level := get_tree().current_scene
-	if level.has_method("award_points"):
-		level.award_points(score_value, global_position)
-	elif level.has_method("add_points"):
-		level.add_points(score_value)
-	_drop_defeat_rewards()
-	_try_drop_candy()
-	queue_free()
+	health -= 1
+	if health <= 0:
+		var level := get_tree().current_scene
+		if level.has_method("award_points"):
+			level.award_points(score_value, global_position)
+		elif level.has_method("add_points"):
+			level.add_points(score_value)
+		_drop_defeat_rewards()
+		_try_drop_candy()
+		queue_free()
+		return
+
+	_flash_hit()
+
+func _flash_hit() -> void:
+	is_taking_hit = true
+	visual.modulate = Color(1.0, 1.0, 1.0, 0.25)
+	await get_tree().create_timer(hit_flash_time).timeout
+	visual.modulate = Color.WHITE
+	is_taking_hit = false
 
 func _shoot() -> void:
 	if projectile_scene == null:

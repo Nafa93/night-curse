@@ -26,6 +26,7 @@ enum State {
 @export var shake_speed := 45.0
 @export var gravity := 980.0
 @export var health := 2
+@export var hit_flash_time := 0.12
 @export var score_value := 300
 @export_range(0.0, 1.0, 0.01) var heart_drop_chance := 0.2
 @export_range(0.0, 1.0, 0.01) var candy_drop_chance := 0.15
@@ -48,6 +49,7 @@ var state_time := 0.0
 var is_active := false
 var is_world_enabled := true
 var is_near_screen := false
+var is_taking_hit := false
 var base_collision_layer := 8
 var tracked_target: CharacterBody2D
 
@@ -118,11 +120,12 @@ func reset_attack() -> void:
 	_enter_patrol()
 
 func take_hit() -> void:
-	if state == State.DEFEATED:
+	if is_taking_hit or state == State.DEFEATED:
 		return
 
 	health -= 1
 	if health > 0:
+		_flash_hit()
 		return
 
 	state = State.DEFEATED
@@ -140,6 +143,13 @@ func take_hit() -> void:
 		detection_area.set_deferred("monitoring", false)
 		visible = false
 		set_physics_process(false)
+
+func _flash_hit() -> void:
+	is_taking_hit = true
+	visual.modulate = Color(1.0, 1.0, 1.0, 0.25)
+	await get_tree().create_timer(hit_flash_time).timeout
+	visual.modulate = Color.WHITE
+	is_taking_hit = false
 
 func _process_patrol(_delta: float) -> void:
 	if not autonomous:
