@@ -48,8 +48,8 @@ theme_override_colors/font_shadow_color = Color(0.55, 0.1, 0.14, 1)
 theme_override_constants/shadow_offset_x = 2
 theme_override_constants/shadow_offset_y = 2
 theme_override_fonts/font = ExtResource("2_font")
-theme_override_font_sizes/font_size = 20
-text = "CURSED CHILD"
+theme_override_font_sizes/font_size = 16
+text = "THE OTHER SIDE"
 horizontal_alignment = 1
 
 [node name="Subtitle" type="Label" parent="."]

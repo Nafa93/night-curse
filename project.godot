@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Night Curse"
+config/name="The Other Side"
 run/main_scene="res://scenes/Levels/MainMenu.tscn"
 config/features=PackedStringArray("4.6", "Forward Plus")
 config/icon="res://icon.svg"

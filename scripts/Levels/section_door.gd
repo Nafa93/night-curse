@@ -48,11 +48,6 @@ func _physics_process(_delta: float) -> void:
 	if not is_instance_valid(_tracked_player):
 		return
 
-	if _state == DoorState.CLOSED and lockable and not _key_lock_opened:
-		if Input.is_action_just_pressed("interact"):
-			_try_unlock()
-		return
-
 	if _state != DoorState.OPEN:
 		return
 
