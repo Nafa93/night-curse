@@ -3,7 +3,11 @@
 [ext_resource type="PackedScene" path="res://scenes/Characters/Enemies/KnightEnemy.tscn" id="1_knight"]
 
 [node name="SpearKnightEnemy" unique_id=1628933390 instance=ExtResource("1_knight")]
+scale = Vector2(1.5, 1.5)
 weapon_variant = 1
+health = 5
+score_value = 2000
+drops_key = true
 
 [node name="CollisionShape2D" parent="." index="2"]
 position = Vector2(-0.25, 0.5)

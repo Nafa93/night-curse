@@ -16,6 +16,7 @@
 [ext_resource type="PackedScene" path="res://scenes/Characters/Enemies/RightHandMelee.tscn" id="13_2lm0f"]
 [ext_resource type="PackedScene" uid="uid://ieha0ab85dxf" path="res://scenes/Characters/Enemies/SwordKnightEnemy.tscn" id="14_2lm0f"]
 [ext_resource type="Script" uid="uid://du51i4l182iad" path="res://scripts/Levels/world_container.gd" id="14_world_container"]
+[ext_resource type="PackedScene" uid="uid://saalni077hd8" path="res://scenes/Characters/Enemies/SpearKnightEnemy.tscn" id="15_o821h"]
 
 [node name="FirstLevel" type="Node2D" unique_id=1350433231]
 script = ExtResource("1_4y20v")
@@ -175,8 +176,16 @@ collectible_id = "first_level_cookie_01"
 position = Vector2(1260, 186)
 collectible_id = "first_level_cookie_01"
 
+[node name="CookiePickup4" parent="Worlds/Otherside/Items" unique_id=1942226882 instance=ExtResource("11_cookie")]
+position = Vector2(2112, -175)
+collectible_id = "first_level_cookie_01"
+
 [node name="SwordKnightEnemy" parent="Worlds/Otherside" unique_id=770443302 instance=ExtResource("14_2lm0f")]
 position = Vector2(2066, -17)
+
+[node name="SpearKnightEnemy" parent="Worlds/Otherside" unique_id=1628933390 instance=ExtResource("15_o821h")]
+position = Vector2(1857, -123)
+starts_moving_right = true
 
 [node name="Player" parent="." unique_id=257405712 instance=ExtResource("2_4q8ap")]
 position = Vector2(90, 185)

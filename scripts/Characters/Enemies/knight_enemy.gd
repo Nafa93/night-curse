@@ -2,6 +2,7 @@ extends CharacterBody2D
 
 const SMALL_HEART_PICKUP := preload("res://scenes/Items/SmallHeartPickup.tscn")
 const CANDY_PICKUP := preload("res://scenes/Items/CandyPickup.tscn")
+const KEY_ITEM := preload("res://scenes/Items/KeyItem.tscn")
 
 enum WeaponVariant {
 	SWORD,
@@ -34,6 +35,7 @@ enum WeaponVariant {
 @export var spear_shake_speed := 55.0
 @export_range(0.0, 1.0, 0.01) var heart_drop_chance := 0.2
 @export_range(0.0, 1.0, 0.01) var candy_drop_chance := 0.15
+@export var drops_key := false
 @export var active_in_corporeal_world := true
 @export var active_in_spectral_world := false
 
@@ -145,7 +147,10 @@ func take_hit() -> void:
 	health -= 1
 	if health <= 0:
 		_award_points()
-		_try_drop_heart()
+		if drops_key:
+			_drop_defeat_rewards()
+		else:
+			_try_drop_heart()
 		_try_drop_candy()
 		queue_free()
 		return
@@ -319,6 +324,26 @@ func _award_points() -> void:
 		level.award_points(score_value, global_position)
 	elif level.has_method("add_points"):
 		level.add_points(score_value)
+
+func _drop_defeat_rewards() -> void:
+	var level := get_tree().current_scene as Node2D
+	if level == null:
+		return
+
+	var heart_offsets := [
+		Vector2(-16.0, -4.0),
+		Vector2(0.0, -12.0),
+		Vector2(16.0, -4.0),
+	]
+	for offset in heart_offsets:
+		var heart: Area2D = SMALL_HEART_PICKUP.instantiate()
+		heart.position = level.to_local(global_position + offset)
+		level.call_deferred("add_child", heart)
+
+	var gold_key: Area2D = KEY_ITEM.instantiate()
+	gold_key.set("key_variant", 1)
+	gold_key.position = level.to_local(global_position + Vector2(0.0, -30.0))
+	level.call_deferred("add_child", gold_key)
 
 func _try_drop_heart() -> void:
 	if randf() > heart_drop_chance:
