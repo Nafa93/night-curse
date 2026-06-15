@@ -7,6 +7,8 @@ extends Area2D
 @onready var screen_notifier: VisibleOnScreenNotifier2D = $VisibleOnScreenNotifier2D
 
 var direction := 1.0
+var velocity_2d := Vector2.ZERO
+var is_aimed := false
 var entered_screen := false
 
 func _ready() -> void:
@@ -24,8 +26,22 @@ func setup(new_direction: float) -> void:
 		direction = 1.0
 	visual.flip_h = direction < 0.0
 
+func setup_aimed(aim_direction: Vector2) -> void:
+	var dir := aim_direction.normalized()
+	if dir == Vector2.ZERO:
+		dir = Vector2.RIGHT
+	velocity_2d = dir * speed
+	direction = signf(dir.x)
+	if direction == 0.0:
+		direction = 1.0
+	visual.flip_h = direction < 0.0
+	is_aimed = true
+
 func _physics_process(delta: float) -> void:
-	position.x += direction * speed * delta
+	if is_aimed:
+		position += velocity_2d * delta
+	else:
+		position.x += direction * speed * delta
 
 func _on_body_entered(body: Node2D) -> void:
 	if body.has_method("take_damage"):

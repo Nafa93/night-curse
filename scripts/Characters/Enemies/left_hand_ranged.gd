@@ -16,6 +16,11 @@ const CANDY_PICKUP := preload("res://scenes/Items/CandyPickup.tscn")
 @export var oscillation_speed := 1.5
 @export_range(0.0, 1.0, 0.01) var heart_drop_chance := 0.2
 @export_range(0.0, 1.0, 0.01) var candy_drop_chance := 0.15
+@export var autonomous := true
+@export var aim_at_player_y := false
+@export var redirect_damage_to_parent := false
+@export var always_track_player := false
+@export var manual_shoot_only := false
 @export var active_in_corporeal_world := true
 @export var active_in_spectral_world := false
 
@@ -66,17 +71,22 @@ func _physics_process(delta: float) -> void:
 	if is_instance_valid(player_target):
 		_face_player()
 
+	if always_track_player and is_instance_valid(player_target):
+		tracked_target = player_target
+
 	shoot_time_remaining = maxf(shoot_time_remaining - delta, 0.0)
 	if is_instance_valid(tracked_target):
 		velocity.x = 0.0
-		if shoot_time_remaining <= 0.0 and not is_shooting:
+		if shoot_time_remaining <= 0.0 and not is_shooting and not manual_shoot_only:
 			_shoot()
-	else:
+	elif autonomous:
 		velocity.x = direction * speed
 		if abs(global_position.x - start_x) >= patrol_distance:
 			direction *= -1.0
 			start_x = global_position.x
 			_update_facing_direction(direction)
+	else:
+		velocity.x = 0.0
 
 	float_elapsed += delta
 	velocity.y = 0.0
@@ -99,7 +109,17 @@ func refresh_activation_state() -> void:
 		tracked_target = null
 		is_shooting = false
 
+func trigger_shoot() -> void:
+	if is_active and not is_shooting and is_instance_valid(tracked_target):
+		_shoot()
+
 func take_hit() -> void:
+	if redirect_damage_to_parent:
+		var parent := get_parent()
+		if parent and parent.has_method("take_hit"):
+			parent.take_hit()
+		return
+
 	if is_taking_hit or health <= 0:
 		return
 
@@ -132,7 +152,11 @@ func _shoot() -> void:
 	var projectile := projectile_scene.instantiate()
 	get_parent().add_child(projectile)
 	projectile.global_position = muzzle.global_position
-	projectile.setup(facing_direction)
+	if aim_at_player_y and is_instance_valid(tracked_target):
+		var aim_dir := tracked_target.global_position - muzzle.global_position
+		projectile.setup_aimed(aim_dir)
+	else:
+		projectile.setup(facing_direction)
 
 	await get_tree().create_timer(shoot_hold_time).timeout
 	if is_instance_valid(self) and not is_queued_for_deletion():

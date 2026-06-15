@@ -16,6 +16,10 @@ enum State {
 }
 
 @export var autonomous := true
+@export var return_to_home := false
+@export var home_return_speed := 150.0
+@export var aim_at_target := false
+@export var redirect_damage_to_parent := false
 @export var patrol_speed := 36.0
 @export var patrol_distance := 96.0
 @export var charge_speed := 220.0
@@ -41,6 +45,8 @@ enum State {
 @onready var detection_area: Area2D = $DetectionArea
 @onready var activation_notifier: VisibleOnScreenNotifier2D = $ActivationNotifier
 
+var home_position := Vector2.ZERO
+var charge_target_y := 0.0
 var state := State.PATROL
 var direction := -1.0
 var start_x := 0.0
@@ -54,6 +60,7 @@ var base_collision_layer := 8
 var tracked_target: CharacterBody2D
 
 func _ready() -> void:
+	home_position = global_position
 	start_x = global_position.x
 	base_collision_layer = collision_layer
 	damage_area.body_entered.connect(_on_damage_area_body_entered)
@@ -105,10 +112,14 @@ func refresh_activation_state() -> void:
 func trigger_attack(target_position: Vector2) -> void:
 	if not is_active or state in [State.TELEGRAPH, State.CHARGE, State.DEFEATED]:
 		return
+	if return_to_home and global_position.distance_to(home_position) > 2.0:
+		return
 
 	var target_direction: float = signf(target_position.x - global_position.x)
 	if target_direction != 0.0:
 		direction = target_direction
+	if aim_at_target:
+		charge_target_y = target_position.y
 	_update_direction()
 	_enter_telegraph()
 
@@ -120,6 +131,12 @@ func reset_attack() -> void:
 	_enter_patrol()
 
 func take_hit() -> void:
+	if redirect_damage_to_parent:
+		var parent := get_parent()
+		if parent and parent.has_method("take_hit"):
+			parent.take_hit()
+		return
+
 	if is_taking_hit or state == State.DEFEATED:
 		return
 
@@ -153,7 +170,19 @@ func _flash_hit() -> void:
 
 func _process_patrol(_delta: float) -> void:
 	if not autonomous:
-		velocity.x = 0.0
+		if return_to_home:
+			var diff := home_position - global_position
+			if diff.length() <= 2.0:
+				velocity = Vector2.ZERO
+				global_position = home_position
+				_face_player_direction()
+			else:
+				velocity = diff.normalized() * home_return_speed
+				direction = signf(diff.x)
+				_update_direction()
+		else:
+			velocity.x = 0.0
+			_face_player_direction()
 		return
 
 	if _can_detect_target():
@@ -178,12 +207,17 @@ func _process_telegraph(delta: float) -> void:
 		_enter_charge()
 
 func _process_charge() -> void:
-	velocity.x = direction * charge_speed
+	if aim_at_target:
+		var target := Vector2(charge_start_x + direction * charge_distance, charge_target_y)
+		velocity = (target - global_position).normalized() * charge_speed
+	else:
+		velocity.x = direction * charge_speed
 	if abs(global_position.x - charge_start_x) >= charge_distance:
 		_enter_recover()
 
 func _process_recover(delta: float) -> void:
 	velocity.x = move_toward(velocity.x, 0.0, charge_speed * delta * 5.0)
+	velocity.y = move_toward(velocity.y, 0.0, charge_speed * delta * 5.0)
 	state_time += delta
 	if state_time >= recover_time:
 		direction *= -1.0
@@ -207,8 +241,21 @@ func _enter_telegraph() -> void:
 func _enter_charge() -> void:
 	state = State.CHARGE
 	charge_start_x = global_position.x
+	if aim_at_target:
+		var player := _find_player()
+		if is_instance_valid(player):
+			charge_target_y = player.global_position.y
 	visual.play(&"charge")
 	charge_started.emit()
+
+func _find_player() -> CharacterBody2D:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return null
+	var candidate := scene.find_child("Player", true, false)
+	if candidate is CharacterBody2D and candidate.has_method("take_damage"):
+		return candidate as CharacterBody2D
+	return null
 
 func _enter_recover() -> void:
 	if state != State.CHARGE:
@@ -218,6 +265,18 @@ func _enter_recover() -> void:
 	state_time = 0.0
 	visual.play(&"detect")
 	charge_finished.emit()
+
+func _face_player_direction() -> void:
+	var scene := get_tree().current_scene
+	if scene == null:
+		return
+	var player := scene.find_child("Player", true, false)
+	if player == null:
+		return
+	var dir := signf((player as Node2D).global_position.x - global_position.x)
+	if dir != 0.0 and dir != direction:
+		direction = dir
+		_update_direction()
 
 func _turn_around() -> void:
 	direction *= -1.0
