@@ -123,6 +123,7 @@ func take_hit() -> void:
 	if is_taking_hit or health <= 0:
 		return
 
+	SoundManager.play_impact()
 	health -= 1
 	if health <= 0:
 		var level := get_tree().current_scene

@@ -140,6 +140,7 @@ func take_hit() -> void:
 	if is_taking_hit or state == State.DEFEATED:
 		return
 
+	SoundManager.play_impact()
 	health -= 1
 	if health > 0:
 		_flash_hit()

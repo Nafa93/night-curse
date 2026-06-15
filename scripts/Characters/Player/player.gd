@@ -373,6 +373,7 @@ func take_damage(source_position: Vector2 = Vector2.ZERO) -> void:
 	if is_respawning or is_taking_damage:
 		return
 
+	SoundManager.play_impact()
 	_cancel_attack_charge()
 	is_taking_damage = true
 	var knockback_direction: float = sign(global_position.x - source_position.x)
@@ -412,6 +413,7 @@ func _start_projectile_attack() -> void:
 
 	can_attack = false
 	is_attacking = true
+	SoundManager.play_attack()
 	_play_animation(&"CrouchAttack" if is_crouching else &"Attack")
 	_spawn_player_projectile()
 	await get_tree().create_timer(attack_time).timeout
@@ -440,6 +442,7 @@ func _set_charge_flash(amount: float) -> void:
 		charge_material.set_shader_parameter("white_flash", amount)
 
 func _start_melee_attack() -> void:
+	SoundManager.play_attack()
 	attack_area.position = Vector2(
 		18.0 * facing_direction,
 		7.0 if is_crouching else 0.0

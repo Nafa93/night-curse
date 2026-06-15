@@ -27,6 +27,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 	_collected = true
 	set_deferred("monitoring", false)
+	SoundManager.play_pickup()
 	_award_points()
 	queue_free()
 

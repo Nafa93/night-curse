@@ -31,6 +31,7 @@ func _on_body_entered(body: Node2D) -> void:
 	if CollectibleTracker.collect_cookie(_resolved_id):
 		_collected = true
 		set_deferred("monitoring", false)
+		SoundManager.play_pickup()
 		_award_points()
 		queue_free()
 

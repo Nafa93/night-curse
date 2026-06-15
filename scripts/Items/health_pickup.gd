@@ -29,6 +29,7 @@ func _on_body_entered(body: Node2D) -> void:
 
 	is_collected = true
 	set_deferred("monitoring", false)
+	SoundManager.play_pickup()
 	var amount: int = 999 if full_heal else heal_amount
 	body.heal(amount)
 	_award_points()
