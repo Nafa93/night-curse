@@ -173,6 +173,7 @@ func _update_attack_input(delta: float) -> void:
 	if Input.is_action_just_pressed("attack") and can_attack:
 		is_charging_attack = true
 		attack_charge_time = 0.0
+		_start_attack()
 
 	if not is_charging_attack:
 		return
@@ -194,8 +195,6 @@ func _update_attack_input(delta: float) -> void:
 	_cancel_attack_charge()
 	if charged:
 		_start_projectile_attack()
-	else:
-		_start_attack()
 
 func _update_input_buffers(delta: float, input_direction: float) -> void:
 	if Input.is_action_just_pressed("jump"):
