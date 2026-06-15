@@ -25,9 +25,10 @@ enum WeaponVariant {
 @export var spear_visual_scale := Vector2.ONE
 @export var spear_visual_offset := 12.0
 @export var sword_attack_size := Vector2(38.0, 20.0)
-@export var spear_attack_size := Vector2(30.0, 10.0)
+@export var spear_attack_size := Vector2(20.0, 10.0)
 @export var sword_attack_center := 18.0
 @export var spear_attack_center := 20.0
+@export var spear_lunge_speed := 48.0
 @export var spear_telegraph_time := 0.35
 @export var spear_shake_distance := 2.0
 @export var spear_shake_speed := 55.0
@@ -98,7 +99,12 @@ func _physics_process(delta: float) -> void:
 	if weapon_variant == WeaponVariant.SWORD and not is_attacking and not is_telegraphing:
 		attack_visual.rotation = sword_bob_amplitude if visual.frame == 0 else -sword_bob_amplitude
 
-	velocity.x = 0.0 if is_taking_hit or is_attacking else direction * speed
+	if is_taking_hit or is_attacking and not (weapon_variant == WeaponVariant.SPEAR and not is_telegraphing):
+		velocity.x = 0.0
+	elif is_attacking:
+		velocity.x = direction * spear_lunge_speed
+	else:
+		velocity.x = direction * speed
 	move_and_slide()
 
 	if is_taking_hit or is_attacking:
