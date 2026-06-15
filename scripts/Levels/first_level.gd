@@ -10,6 +10,7 @@ const FLOATING_SCORE_SCENE := preload("res://scenes/Levels/FloatingScore.tscn")
 @export var camera_bounds_horizontal_padding := 32.0
 @export var camera_door_limit_inset := 8.0
 @export var camera_door_bounds_inset := 16.0
+@export var camera_door_back_reveal := 8.0
 
 @onready var player: CharacterBody2D = $Player
 @onready var camera: Camera2D = $Player/Camera2D
@@ -88,9 +89,9 @@ func _update_camera_limits(world: TileMapLayer, reset_smoothing := true) -> void
 	var left_limit := floori(room_bounds.position.x)
 	var right_limit := ceili(room_bounds.end.x)
 	if has_room_limit_left:
-		left_limit = maxi(left_limit, floori(room_limit_left))
+		left_limit = floori(room_limit_left)
 	if has_room_limit_right:
-		right_limit = mini(right_limit, ceili(room_limit_right))
+		right_limit = ceili(room_limit_right)
 
 	camera.limit_left = left_limit
 	camera.limit_top = floori(room_bounds.position.y)
@@ -212,7 +213,10 @@ func _on_section_door_locked(door: SectionDoor) -> void:
 	player.set_physics_process(false)
 	camera.position_smoothing_speed = room_camera_smoothing_speed
 	_complete_room_transition(door)
+	var half_w := get_viewport_rect().size.x / camera.zoom.x / 2.0
+	camera.limit_left = maxi(camera.limit_left, floori(camera.get_screen_center_position().x - half_w))
 	await get_tree().create_timer(room_camera_transition_time).timeout
+	camera.limit_left = floori(room_limit_left)
 	camera.position_smoothing_speed = base_camera_smoothing_speed
 	player.set_physics_process(true)
 	is_world_transitioning = false
@@ -224,10 +228,10 @@ func _complete_room_transition(door: SectionDoor) -> void:
 	var crossing_direction := door.get_crossing_direction()
 	if crossing_direction > 0.0:
 		has_room_limit_left = true
-		room_limit_left = door.global_position.x
+		room_limit_left = door.global_position.x - camera_door_back_reveal
 	else:
 		has_room_limit_right = true
-		room_limit_right = door.global_position.x
+		room_limit_right = door.global_position.x + camera_door_back_reveal
 
 	var active_tile_map := otherside_tile_map if is_otherside else regular_tile_map
 	_update_camera_limits(active_tile_map, false)
@@ -251,10 +255,10 @@ func _restore_checkpoint() -> void:
 		checkpoint_door.restore_locked_after_crossing()
 		if checkpoint_door.get_crossing_direction() > 0.0:
 			has_room_limit_left = true
-			room_limit_left = checkpoint_door.global_position.x
+			room_limit_left = checkpoint_door.global_position.x - camera_door_back_reveal
 		else:
 			has_room_limit_right = true
-			room_limit_right = checkpoint_door.global_position.x
+			room_limit_right = checkpoint_door.global_position.x + camera_door_back_reveal
 
 	is_otherside = CheckpointManager.is_otherside
 	points = CheckpointManager.score
