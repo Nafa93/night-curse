@@ -2,8 +2,8 @@
 
 [ext_resource type="TileSet" uid="uid://bpo6i70g5wglp" path="res://assets/Tilesets/tileset.tres" id="1_lrmbb"]
 [ext_resource type="PackedScene" uid="uid://b4r6ta2eg1sy7" path="res://scenes/Characters/Player/Player.tscn" id="2_cvagv"]
+[ext_resource type="PackedScene" path="res://scenes/Characters/Enemies/BigGroundEnemy.tscn" id="3_wjpyg"]
 [ext_resource type="Script" uid="uid://wo4pp0n61p3p" path="res://scripts/Testing/boss_testing.gd" id="4_camera"]
-[ext_resource type="PackedScene" uid="uid://saalni077hd8" path="res://scenes/Characters/Enemies/SpearKnightEnemy.tscn" id="4_wjpyg"]
 
 [node name="BossTesting" type="Node2D" unique_id=292349641]
 script = ExtResource("4_camera")
@@ -15,5 +15,5 @@ tile_set = ExtResource("1_lrmbb")
 [node name="Player" parent="TileMapLayer" unique_id=492698432 instance=ExtResource("2_cvagv")]
 position = Vector2(62, 157)
 
-[node name="SpearKnightEnemy" parent="." unique_id=228865927 instance=ExtResource("4_wjpyg")]
-position = Vector2(266, 161)
+[node name="BigGroundEnemy" parent="." unique_id=514778552 instance=ExtResource("3_wjpyg")]
+position = Vector2(253, 152)
