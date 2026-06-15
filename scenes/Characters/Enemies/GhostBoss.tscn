@@ -56,7 +56,7 @@ shape = SubResource("RectangleShape2D_damage")
 rect = Rect2(-80, -40, 160, 80)
 
 [node name="LeftHandEnemy" parent="." instance=ExtResource("3_left")]
-position = Vector2(-52, 0)
+position = Vector2(-32, 0)
 autonomous = false
 aim_at_player_y = true
 redirect_damage_to_parent = true
@@ -66,7 +66,7 @@ active_in_corporeal_world = false
 active_in_spectral_world = true
 
 [node name="RightHandMelee" parent="." instance=ExtResource("4_right")]
-position = Vector2(52, 0)
+position = Vector2(32, 0)
 autonomous = false
 return_to_home = true
 home_return_speed = 150.0

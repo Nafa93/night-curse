@@ -91,7 +91,7 @@ func _physics_process(delta: float) -> void:
 
 	move_and_slide()
 
-	if state == State.CHARGE and is_on_wall():
+	if state == State.CHARGE and (is_on_wall() or (aim_at_target and get_slide_collision_count() > 0)):
 		_enter_recover()
 
 func set_day_state(is_corporeal: bool) -> void:
