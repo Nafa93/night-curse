@@ -170,15 +170,24 @@ func _physics_process(delta: float) -> void:
 	_update_attack_input(delta)
 
 func _update_attack_input(delta: float) -> void:
-	if Input.is_action_just_pressed("attack") and can_attack:
+	if Input.is_action_just_pressed("attack"):
 		is_charging_attack = true
 		attack_charge_time = 0.0
-		_start_attack()
 
 	if not is_charging_attack:
 		return
 
-	if Input.is_action_pressed("attack"):
+	if not Input.is_action_pressed("attack"):
+		var charged := attack_charge_time >= charged_attack_time
+		_cancel_attack_charge()
+		if can_attack:
+			if charged:
+				_start_projectile_attack()
+			else:
+				_start_attack()
+		return
+
+	if can_attack:
 		attack_charge_time += delta
 		if attack_charge_time >= charged_attack_time:
 			var flash_interval := maxf(charged_flash_interval, 0.01)
@@ -187,14 +196,6 @@ func _update_attack_input(delta: float) -> void:
 				flash_interval * 2.0
 			)
 			_set_charge_flash(1.0 if flash_phase < flash_interval else 0.0)
-
-	if not Input.is_action_just_released("attack"):
-		return
-
-	var charged := attack_charge_time >= charged_attack_time
-	_cancel_attack_charge()
-	if charged:
-		_start_projectile_attack()
 
 func _update_input_buffers(delta: float, input_direction: float) -> void:
 	if Input.is_action_just_pressed("jump"):
