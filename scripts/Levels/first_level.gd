@@ -45,6 +45,7 @@ func _ready() -> void:
 	player.game_over.connect(_on_player_game_over)
 	game_over_screen.continue_selected.connect(_on_continue_selected)
 	game_over_screen.quit_selected.connect(_on_quit_selected)
+	the_end_screen.finished.connect(_on_the_end_finished)
 	_restore_checkpoint()
 	_on_player_lives_changed(player.lives, player.max_lives)
 	_on_player_keys_changed(player.key_count, player.max_keys)
@@ -327,6 +328,10 @@ func _on_player_game_over() -> void:
 	is_game_over = true
 	game_over_screen.show_menu()
 	get_tree().paused = true
+
+func _on_the_end_finished() -> void:
+	CheckpointManager.clear()
+	get_tree().reload_current_scene()
 
 func _on_continue_selected() -> void:
 	get_tree().paused = false
